@@ -19,6 +19,7 @@ interface Car {
 }
 const Home = () => {
   const [cars, setCars] = useState<Car[]>([]);
+  const [isAuth, setIsAuth] = useState(false);
   useEffect(() => {
     axios.get('http://localhost:3001/cars')
       .then(response => {
@@ -28,12 +29,29 @@ const Home = () => {
       .catch(error => {
         console.error('There was an error fetching the car data!', error);
       });
+    // Vérifiez l'authentification à partir du stockage local
+    const authStatus = localStorage.getItem('isAuth') === 'true';
+    setIsAuth(authStatus);
   }, []);
+  // Fonction pour gérer la déconnexion
+  const handleLogout = () => {
+    localStorage.clear(); // Vider le stockage local
+    setIsAuth(false); // Mettre à jour l'état isAuth
+  };
 
+
+
+  // State to manage active button and content
+  const [activeButton, setActiveButton] = useState('luxury');
+
+  // Function to handle button clicks
+  const handleButtonClick = (button: string) => {
+    setActiveButton(button);
+  };
 
   return (
     <div>
-      <div className="relative h-[820px]">
+      <div className="relative h-[830px]">
         <div className="absolute inset-0 bg-cover bg-center bg-[url('/images/11.jpg')]">
           <div className="absolute inset-0">
             <div className="bg-[rgba(41,41,41,0.38)] backdrop-blur-md bg-opacity-30 text-white flex justify-between items-center px-[12%] h-[102px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
@@ -52,11 +70,21 @@ const Home = () => {
                   <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">FAQ</a>
                 </nav>
               </div>
-              <Link href="/signin">
-                <div className="bg-[#1ECB15] text-white flex items-center justify-center rounded w-28 h-9 leading-7 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105">
-                  Sign In
-                </div>
-              </Link>
+
+              {isAuth ? (
+                <button
+                  onClick={handleLogout}
+                  className="bg-[#1ECB15] text-white flex items-center justify-center rounded w-28 h-9 leading-7 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105"
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link href="/signin">
+                  <div className="bg-[#1ECB15] text-white flex items-center justify-center rounded w-28 h-9 leading-7 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105">
+                    Sign In
+                  </div>
+                </Link>
+              )}
             </div>
             <div className="absolute top-1/3 left-[12%] w-[600px] h-[424.56px]">
               <h1 className="font-outfit font-medium text-white text-[52px] leading-[52px] tracking-[-2px] mb-8">
@@ -199,7 +227,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-      {/* Nouvelle section avec une image de fond */}
+      {/* Nouvelle section */}
       <div className="relative w-full h-[438px] mt-16 bg-[#F9FBFC] rounded-tl-lg">
         {/* Section Title */}
         <h2 className="absolute w-[349.71px] h-[40px] top-[14px] left-1/2 transform -translate-x-1/2 font-dm-sans text-[42px] font-bold leading-[40px] text-center text-gray-900">
@@ -242,8 +270,201 @@ const Home = () => {
           </div>
         </div>
       </div>
+      <div>
+        {/* New Section */}
+        <div className="bg-gray-100 py-16">
+          <div className="text-center">
+            <h2 className="text-4xl font-semibold leading-tight text-[42px] tracking-tighter mb-4 font-outfit">
+              Our Features
+            </h2>
+            <p className="text-[15px] text-[#606060] font-semibold leading-5 mx-auto mb-16 font-outfit max-w-[534px]">
+              Discover a world of convenience, safety, and customization, paving the way for unforgettable adventures and seamless mobility solutions.
+            </p>
+          </div>
+          <div className="relative mb-16 flex justify-center">
+            <img src="/images/car-2.png" alt="Car" className="w-[500px] h-auto px-3" />
+
+            {/* Feature 1 */}
+            <div className="absolute top-0 left-[320px] transform -translate-x-1/2 -translate-y-1/2 flex items-start">
+              <div className="w-14 h-14 p-2.5">
+                <img src="/images/kes.png" alt="Icon 1" className="w-full h-full" />
+              </div>
+              <div className="text-sm leading-6 mt-1 font-inter tracking-tight max-w-[300px] ml-4">
+                <h3 className="text-lg font-semibold mb-2">First class services</h3>
+                Where luxury meets exceptional care, creating unforgettable moments and exceeding your every expectation.
+              </div>
+            </div>
+
+            {/* Feature 2 */}
+            <div className="absolute top-0 right-[320px] transform translate-x-1/2 -translate-y-1/2 flex items-start">
+              <div className="text-sm leading-6 mt-1 font-inter tracking-tight max-w-[300px] mr-4">
+                <h3 className="text-lg font-semibold mb-2 text-right">Quality at Minimum Expense</h3>
+                <p className="text-right">
+                  Reliable support when you need it most, keeping you on the move with confidence and peace of mind.
+                </p>
+              </div>
+              <div className="w-14 h-14 p-2.5">
+                <img src="/images/Expense.png" alt="Icon 2" className="w-full h-full" />
+              </div>
+            </div>
 
 
+            {/* Feature 3 */}
+            <div className="absolute top-[160px] left-[320px] transform -translate-x-1/2 -translate-y-1/2 flex items-start">
+              <div className="w-14 h-14 p-2.5">
+                <img src="/images/road.png" alt="Icon 3" className="w-full h-full" />
+              </div>
+              <div className="text-sm leading-6 mt-1 font-inter tracking-tight max-w-[300px] ml-4">
+                <h3 className="text-lg font-semibold mb-2">24/7 road assistance</h3>
+                Unlocking affordable brilliance with elevating quality while minimizing costs for maximum value.
+              </div>
+            </div>
+
+            {/* Feature 4 */}
+            <div className="absolute bottom-[90px] right-[320px] transform translate-x-1/2 translate-y-1/2 flex items-start">
+              <div className="ml-4 text-right">
+                <h3 className="text-lg font-semibold mb-2">Free Pick-Up & Drop-Off</h3>
+                <p className="text-sm leading-6 font-inter tracking-tight max-w-[300px]">
+                  Enjoy free pickup and drop-off services, adding an extra layer of ease to your car rental experience.
+                </p>
+              </div>
+              <div className="w-14 h-14 p-2.5 ml-4">
+                <img src="/images/Pick.png" alt="Icon 4" className="w-full h-full" />
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+        {/* New Section */}
+        <div className="flex">
+          <div className="w-1/2 h-[492.94px]">
+            <img src="/images/sec.jpg" alt="Luxury Car" className="w-full h-full object-cover" />
+          </div>
+          <div className="w-1/2 bg-[#121212] flex flex-col justify-center px-[100px]">
+            <h1 className="text-white h-[50px] font-outfit text-[42px] font-semibold leading-[50px] tracking-[-1.8px] text-left mb-6">
+              Only Quality For Clients
+            </h1>
+            <div className="flex space-x-2 mb-6">
+              <button
+                className={`focus:outline-none ${activeButton === 'luxury' ? 'bg-[#1ECB15] text-white' : 'bg-[#00000080] text-white'} w-[123px] h-[61px] py-2 rounded-lg transition duration-300 ease-in-out`}
+                onClick={() => handleButtonClick('luxury')}
+              >
+                Luxury
+              </button>
+              <button
+                className={`focus:outline-none ${activeButton === 'comfort' ? 'bg-[#1ECB15] text-white' : 'bg-[#00000080] text-white'} w-[123px] h-[61px] py-2 rounded-lg transition duration-300 ease-in-out`}
+                onClick={() => handleButtonClick('comfort')}
+              >
+                Comfort
+              </button>
+              <button
+                className={`focus:outline-none ${activeButton === 'prestige' ? 'bg-[#1ECB15] text-white' : 'bg-[#00000080] text-white'} w-[123px] h-[61px] py-2 rounded-lg transition duration-300 ease-in-out`}
+                onClick={() => handleButtonClick('prestige')}
+              >
+                Prestige
+              </button>
+            </div>
+
+            <p className="text-white w-[512px] h-[136px] font-inter text-[16px] font-normal leading-[27.2px] tracking-[-0.2px] text-left opacity-75">
+              {activeButton === 'luxury' && (
+                "We offer a meticulously curated collection of the most sought-after luxury vehicles on the market. Whether you prefer the sporty allure of a high-performance sports car, the sophistication of a sleek and luxurious sedan, or the versatility of a premium SUV, we have the perfect car to match your discerning taste."
+              )}
+              {activeButton === 'comfort' && (
+                "Discover unparalleled comfort with our selection of premium vehicles designed to exceed your expectations. Enjoy the latest in comfort and convenience features that make every journey a pleasure."
+              )}
+              {activeButton === 'prestige' && (
+                "Experience the pinnacle of automotive excellence with our prestigious range of vehicles. Each model combines cutting-edge technology with unparalleled craftsmanship to elevate your driving experience."
+              )}
+            </p>
+          </div>
+        </div>
+        {/* New Section */}
+        <div className="bg-gray-100 py-12">
+          <div className="text-center mb-8">
+            <h2 className="text-[#050B20] font-dm-sans text-[40px] font-bold leading-[40px] py-12">
+              Explore Our Premium Brands
+            </h2>
+          </div>
+          <div className="flex justify-center space-x-4">
+            <div className="w-[210px] h-[181px] bg-white border border-[#E9E9E9] rounded-[16px] hover:scale-105  p-[27px_55.5px_25.41px_54.5px] flex flex-col items-center">
+              <img src="/images/audi.png" alt="Audi" className="w-[100px] h-[100px] mb-4" />
+              <p className="text-[#050B20] font-dm-sans text-[18px] font-medium leading-[21.6px] text-center">Audi</p>
+            </div>
+            <div className="w-[210px] h-[181px] bg-white border border-[#E9E9E9] rounded-[16px] hover:scale-105  p-[27px_55.5px_25.41px_54.5px] flex flex-col items-center">
+              <img src="/images/bmw.png" alt="BMW" className="w-[100px] h-[100px] mb-4" />
+              <p className="text-[#050B20] font-dm-sans text-[18px] font-medium leading-[21.6px] text-center">BMW</p>
+            </div>
+            <div className="w-[210px] h-[181px] bg-white border border-[#E9E9E9] rounded-[16px] hover:scale-105  p-[27px_55.5px_25.41px_54.5px] flex flex-col items-center">
+              <img src="/images/ford.png" alt="Ford" className="w-[100px] h-[100px] mb-4" />
+              <p className="text-[#050B20] font-dm-sans text-[18px] font-medium leading-[21.6px] text-center">Ford</p>
+            </div>
+            <div className=" h-[181px] bg-white border border-[#E9E9E9] rounded-[16px] hover:scale-105  p-[27px_55.5px_25.41px_54.5px] flex flex-col items-center">
+              <img src="/images/mercedes.png" alt="Mercedes Benz" className="w-[100px] h-[100px] mb-4" />
+              <p className="text-[#050B20] font-dm-sans text-[18px] font-medium leading-[21.6px] text-center">Mercedes Benz</p>
+            </div>
+            <div className="w-[210px] h-[181px] bg-white border border-[#E9E9E9] rounded-[16px] hover:scale-105  p-[27px_55.5px_25.41px_54.5px] flex flex-col items-center">
+              <img src="/images/peugeot.png" alt="Peugeot" className="w-[100px] h-[100px] mb-4" />
+              <p className="text-[#050B20] font-dm-sans text-[18px] font-medium leading-[21.6px] text-center">Peugeot</p>
+            </div>
+            <div className="w-[210px] h-[181px] bg-white border border-[#E9E9E9] rounded-[16px] hover:scale-105 p-[27px_55.5px_25.41px_54.5px] flex flex-col items-center">
+              <img src="/images/volkswagen.png" alt="Volkswagen" className="w-[100px] h-[100px] mb-4" />
+              <p className="text-[#050B20] font-dm-sans text-[18px] font-medium leading-[21.6px] text-center">Volkswagen</p>
+            </div>
+          </div>
+        </div>
+        {/* New Section */}
+        <div className="bg-gray-100 pt-12 pb-[150px]">
+          <div className="text-center mb-8">
+            <h2 className="text-[#050B20] font-dm-sans text-[40px] font-bold leading-[40px] py-12 pb-20">
+              Latest Blog Posts
+            </h2>
+          </div>
+          <div className="flex justify-center space-x-4">
+            <div className="w-[463px]">
+              <div className="relative">
+                <img src="/images/post1.jpg" alt="Blog Post 1" className="w-full h-[308px] rounded-[17px] object-cover" />
+                <div className="absolute top-[16px] left-[16px] bg-white py-[4.05px] px-[14.67px] rounded-[30px]">
+                  <span className="text-[#050B20] font-dm-sans text-[14px] font-medium leading-[25.9px]">Sound</span>
+                </div>
+              </div>
+              <div className="mt-4">
+                <p className="text-[#050B20] opacity-75 font-dm-sans text-[15px] leading-[27.75px]">Admin · November 22, 2023</p>
+                <h3 className="mt-2 text-[#050B20] font-dm-sans text-[20px] font-medium leading-[30px]">2024 BMW ALPINA XB7 with exclusive details, extraordinary</h3>
+              </div>
+            </div>
+            <div className="w-[463px]">
+              <div className="relative">
+                <img src="/images/post2.jpg" alt="Blog Post 2" className="w-full h-[308px] rounded-[17px] object-cover" />
+                <div className="absolute top-[16px] left-[16px] bg-white py-[4.05px] px-[14.67px] rounded-[30px]">
+                  <span className="text-[#050B20] font-dm-sans text-[14px] font-medium leading-[25.9px]">Accessories</span>
+                </div>
+              </div>
+              <div className="mt-4">
+                <p className="text-[#050B20] opacity-75 font-dm-sans text-[15px] leading-[27.75px]">Admin · November 22, 2023</p>
+                <h3 className="mt-2 text-[#050B20] font-dm-sans text-[20px] font-medium leading-[30px]">BMW X6 M50i is designed to exceed your sportiest.</h3>
+              </div>
+            </div>
+            <div className="w-[463px]">
+              <div className="relative">
+                <img src="/images/post3.jpg" alt="Blog Post 3" className="w-full h-[308px] rounded-[17px] object-cover" />
+                <div className="absolute top-[16px] left-[16px] bg-white py-[4.05px] px-[14.67px] rounded-[30px]">
+                  <span className="text-[#050B20] font-dm-sans text-[14px] font-medium leading-[25.9px]">Exterior</span>
+                </div>
+              </div>
+              <div className="mt-4">
+                <p className="text-[#050B20] opacity-75 font-dm-sans text-[15px] leading-[27.75px]">Admin · November 22, 2023</p>
+                <h3 className="mt-2 text-[#050B20] font-dm-sans text-[20px] font-medium leading-[30px]">BMW X5 Gold 2024 Sport Review: Light on Sport</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+      </div>
     </div>
   );
 };

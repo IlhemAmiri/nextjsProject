@@ -2,7 +2,8 @@ import React from 'react';
 
 const Footer = () => {
   return (
-    <footer className="w-full h-auto bg-[#121212] text-white mt-16 px-[2%]">
+
+    <footer className="w-full h-auto bg-[#121212] text-white  px-[2%]">
       <div className="container mx-auto py-16 px-8 flex flex-col space-y-12 md:flex-row md:space-y-0 md:space-x-12 relative">
         {/* Logo */}
         <div className="flex flex-col space-y-4">
