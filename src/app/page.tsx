@@ -21,10 +21,10 @@ const Home = () => {
   const [cars, setCars] = useState<Car[]>([]);
   const [isAuth, setIsAuth] = useState(false);
   useEffect(() => {
-    axios.get('http://localhost:3001/cars')
+    axios.get('http://localhost:3001/cars?page=1&limit=4') // Limit to 4 cars per page
       .then(response => {
-        console.log(response.data); // Vérifiez les données reçues dans la console
-        setCars(response.data.slice(0, 4));
+        console.log(response.data);
+        setCars(response.data.data);
       })
       .catch(error => {
         console.error('There was an error fetching the car data!', error);
