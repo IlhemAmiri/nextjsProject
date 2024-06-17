@@ -5,6 +5,7 @@ import { FaArrowUp } from 'react-icons/fa';
 import axios from 'axios';
 import Link from 'next/link';
 import CountUp from 'react-countup';
+import { useRouter } from 'next/navigation';
 
 interface Car {
   image: string;
@@ -20,6 +21,7 @@ interface Car {
 const Home = () => {
   const [cars, setCars] = useState<Car[]>([]);
   const [isAuth, setIsAuth] = useState(false);
+  const router = useRouter();
   useEffect(() => {
     axios.get('http://localhost:3001/cars?page=1&limit=4') // Limit to 4 cars per page
       .then(response => {
@@ -37,6 +39,7 @@ const Home = () => {
   const handleLogout = () => {
     localStorage.clear(); // Vider le stockage local
     setIsAuth(false); // Mettre à jour l'état isAuth
+    router.push('/signin');
   };
 
 
@@ -65,7 +68,7 @@ const Home = () => {
                   <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Home</a>
                   <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Cars</a>
                   <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Booking</a>
-                  <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">My Account</a>
+                  <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">My Account</a>
                   <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Blog</a>
                   <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">FAQ</a>
                 </nav>
