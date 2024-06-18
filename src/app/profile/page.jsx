@@ -89,9 +89,9 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      <div className="bg-gray-100 min-h-screen flex flex-col items-center py-24">
-        <div className="flex flex-col md:flex-row w-3/4 max-w-4xl space-y-6 md:space-y-0 md:space-x-6">
-          <div className="bg-white shadow-md rounded-md p-6 w-full md:w-1/3 flex flex-col items-center">
+      <div className="flex justify-center py-12 bg-gray-100">
+        <div className="w-full max-w-7xl flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6  pl-[2.5%]">
+          <div className="bg-white shadow-md rounded-md p-6 w-full md:w-1/4 flex flex-col items-center">
             <img src={client.image} alt="Profile" className="rounded-full w-32 h-32 border-4 border-[#1ECB15]" />
             <h2 className="text-xl font-semibold mt-4 text-center">{client.nom} {client.prenom}</h2>
             <p>{client.email}</p>
@@ -110,7 +110,7 @@ const ProfilePage = () => {
             </Link>
           </li>
                 <li>
-                  <Link href="/profile">
+                  <Link href="/orders">
                     <div
                       onClick={() => handleItemClick('orders')}
                       className={`cursor-pointer py-2 px-6 rounded transition ${

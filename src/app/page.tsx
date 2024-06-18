@@ -8,6 +8,7 @@ import CountUp from 'react-countup';
 import { useRouter } from 'next/navigation';
 
 interface Car {
+  _id: string;
   image: string;
   modele: string;
   marque: string;
@@ -161,7 +162,7 @@ const Home = () => {
                   <hr className="my-4 border-[#E9E9E9]" />
                   <div className="flex justify-between items-center mt-4">
                     <span className="font-dm-sans text-[20px] font-bold leading-[30px]">${car.prixParJ}</span>
-                    <Link href="/details">
+                    <Link href={`/detailsCar/${car._id}`}>
                       <div className="text-[#1ECB15] text-sm flex items-center text-[15px] cursor-pointer">
                         View Details <FaArrowUp className="ml-1 rotate-45" />
                       </div>

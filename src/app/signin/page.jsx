@@ -107,7 +107,7 @@ const Page = () => {
             <div className="text-center mt-6">
               <Link href="/signup">
                 <div className=" font-inter font-normal text-[14px] leading-[19.36px] cursor-pointer">
-                  Don't have an account? Create one
+                  Don't have an account? <span className='text-[#1ECB15]'>Create one</span>
                 </div>
               </Link>
             </div>

@@ -265,7 +265,7 @@ const Signup = () => {
           <div className="text-center mt-6">
             <Link href="/signin">
               <div className=" font-inter font-normal text-[14px] leading-[19.36px] cursor-pointer">
-                Already have an account? Sign in
+                Already have an account? <span className='text-[#1ECB15]'> Sign in</span>
               </div>
             </Link>
           </div>
