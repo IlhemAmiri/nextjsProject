@@ -87,9 +87,11 @@ const OrderPage = () => {
 
   const renderOrders = (status) => {
     return reservations.filter(reservation => reservation.status === status).map((reservation, index) => (
-      <tr key={reservation._id} className="text-center text-[14px]">
+      <tr key={reservation._id} className="text-center text-[14px] mb-4 divide-y divide-gray-300">
         <td className="p-2 font-bold">{index + 1}</td>
         <td className="p-2 font-bold">{reservation.idVoiture ? `${reservation.idVoiture.marque} ${reservation.idVoiture.modele}` : 'Car details not available'}</td>
+        <td className="p-2">{reservation.lieuRamassage}</td>
+        <td className="p-2">{reservation.destination}</td>
         <td className="p-2">{formatDate(reservation.dateDebut)}</td>
         <td className="p-2">{formatDate(reservation.dateFin)}</td>
         <td className="p-2">{reservation.tarifTotale} $ </td>
@@ -133,7 +135,7 @@ const OrderPage = () => {
       </div>
 
       <div className="flex justify-center py-12 bg-gray-100">
-        <div className="w-full max-w-7xl flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">
+        <div className="w-full px-[3%] flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">
           <div className="bg-white shadow-md rounded-md p-6 w-full md:w-1/4 flex flex-col items-center max-h-[600px]">
             <img src={client.image} alt="Profile" className="rounded-full w-32 h-32 border-4 border-[#1ECB15]" width={128} height={128} />
             <h2 className="text-xl font-semibold mt-4 text-center">{client.nom} {client.prenom}</h2>
@@ -205,9 +207,11 @@ const OrderSection = ({ title, status, renderOrders }) => (
       <thead>
         <tr className='text-[#ACACAC] text-[12px]'>
           <th className="p-2 font-normal">#</th>
-          <th className="p-2 font-normal">Car</th>
-          <th className="p-2 font-normal">Start Date</th>
-          <th className="p-2 font-normal">End Date</th>
+          <th className="p-2 font-normal">Car Name</th>
+          <th className="p-2 font-normal">Pick Up Location</th>
+          <th className="p-2 font-normal">Drop Off Location</th>
+          <th className="p-2 font-normal">Pick Up Date</th>
+          <th className="p-2 font-normal">Return Date</th>
           <th className="p-2 font-normal">Total Cost</th>
           <th className="p-2 font-normal">With Driver</th>
           <th className="p-2 font-normal">Comment</th>

@@ -199,7 +199,7 @@ const CarDetailsPage = () => {
             <div className="mt-8">
               <Link href={`/reservation/${carId}`}>
                 <div className="bg-[#1ECB15] text-white text-center px-4 py-2 rounded shadow-md hover:bg-[#17a413] transition cursor-pointer">
-                  Reserve
+                Book Now
                 </div>
               </Link>
             </div>
