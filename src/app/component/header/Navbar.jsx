@@ -16,30 +16,30 @@ const Navbar = () => {
 
     return `${dayName}, ${monthName} ${day}, ${year} ${hours}:${minutes}`;
   };
+
   return (
     <div>
-      <div className="bg-[#121212] text-white flex justify-between items-center px-6 py-2" style={{ paddingLeft: '12%', paddingRight: '12%' }}>
-        <div className="flex items-center text-sm">
-          <div className="flex items-center mr-4">
-          <FaPhone className="text-[#1ECB15] mr-1 transform rotate-90" /> {/* Phone icon with green color */}
+      <div className="bg-[#121212] text-white flex flex-col md:flex-row justify-between items-center px-24 py-2">
+        <div className="flex flex-col md:flex-row items-center text-sm mb-2 md:mb-0">
+          <div className="flex items-center mb-2 md:mb-0 md:mr-4">
+            <FaPhone className="text-[#1ECB15] mr-1 transform rotate-90" />
             <a href="tel:+2083339296" className="font-inter text-[14px] leading-[27.2px]">+208 333 9296</a>
           </div>
-          <div className="flex items-center mr-4">
-            <FaEnvelope className="text-[#1ECB15] mr-1" /> {/* Envelope icon with green color */}
+          <div className="flex items-center mb-2 md:mb-0 md:mr-4">
+            <FaEnvelope className="text-[#1ECB15] mr-1" />
             <a href="mailto:contact@rentaly.com" className="font-inter text-[14px] leading-[27.2px]">contact@rentaly.com</a>
           </div>
           <div className="flex items-center">
-            <FaClock className="text-[#1ECB15] mr-1" /> {/* Clock icon with green color */}
+            <FaClock className="text-[#1ECB15] mr-1" />
             <span className="font-inter text-[14px] leading-[27.2px]">{getCurrentDate()}</span>
           </div>
         </div>
         <div className="flex items-center space-x-4">
-          {/* Social media icons */}
-          <a href="#"><FaFacebook /></a>
-          <a href="#"><FaTwitter /></a>
-          <a href="#"><FaYoutube /></a>
-          <a href="#"><FaPinterest /></a>
-          <a href="#"><FaInstagram /></a>
+          <a href="#" aria-label="Facebook"><FaFacebook /></a>
+          <a href="#" aria-label="Twitter"><FaTwitter /></a>
+          <a href="#" aria-label="YouTube"><FaYoutube /></a>
+          <a href="#" aria-label="Pinterest"><FaPinterest /></a>
+          <a href="#" aria-label="Instagram"><FaInstagram /></a>
         </div>
       </div>
     </div>
