@@ -45,7 +45,7 @@ const AccueilHome = ({ isAuth, handleLogout }) => {
         )}
       </div>
       {menuOpen && (
-        <div className="md:hidden bg-[rgba(41,41,41,0.8)] text-white flex flex-col items-center space-y-4 py-4 items-end pr-6">
+        <div className="md:hidden bg-[rgba(41,41,41,0.8)] text-white flex flex-col items-center space-y-4 py-4 pr-6">
           <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Home</a>
           <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Cars</a>
           <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Booking</a>
