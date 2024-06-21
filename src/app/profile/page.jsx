@@ -8,6 +8,8 @@ import { FaUser, FaCalendar, FaCar, FaSignOutAlt } from 'react-icons/fa';
 const ProfilePage = () => {
   const [client, setClient] = useState(null);
   const [error, setError] = useState('');
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isAuth, setIsAuth] = useState(false);
   const [activePage, setActivePage] = useState('profile');
   const router = useRouter();
 
@@ -41,8 +43,10 @@ const ProfilePage = () => {
     };
 
     fetchClientData();
+    const authStatus = localStorage.getItem('isAuth') === 'true';
+    setIsAuth(authStatus);
   }, [router]);
-  
+
   const handleItemClick = (page) => {
     setActivePage(page); // Met à jour la page active lors du clic sur un élément
   };
@@ -53,42 +57,79 @@ const ProfilePage = () => {
 
   const handleLogout = () => {
     localStorage.clear();
+    setIsAuth(false);
     router.push('/signin');
   };
 
 
+
+
   return (
     <div>
-      <div className="relative h-[380px]">
-        <div className="absolute inset-0 bg-cover bg-center bg-[url('/images/road.jpg')]">
-          <div className="absolute inset-0">
-            <div className="  text-white flex justify-between items-center px-[12%] h-[102px] ">
-              <div className="flex justify-center">
-                <a href="#">
-                  <img src="/images/Container.png" alt="Logo" className="w-[156px] h-[56px]" />
-                </a>
+      <div className="h-[400px] bg-cover bg-center bg-[url('/images/road.jpg')]">
+        <div className=" text-white flex justify-between items-center px-6 lg:px-12 py-4">
+          <div className="flex justify-center">
+            <a href="#">
+              <img src="/images/Container.png" alt="Logo" className='w-40 h-14' />
+            </a>
+          </div>
+          <div className="hidden md:flex flex-1 justify-center">
+            <nav className="flex space-x-4 lg:space-x-20">
+              <a href="/" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Home</a>
+              <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Cars</a>
+              <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Booking</a>
+              <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">My Account</a>
+              <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Blog</a>
+              <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">FAQ</a>
+            </nav>
+          </div>
+          <div className="md:hidden flex items-center ml-auto">
+            <button onClick={() => setMenuOpen(!menuOpen)} className="focus:outline-none">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </button>
+          </div>
+          {isAuth ? (
+            <button
+              onClick={handleLogout}
+              className="hidden md:flex bg-[#1ECB15] text-white items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link href="/signin">
+              <div className="hidden md:flex bg-[#1ECB15] text-white items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105">
+                Sign In
               </div>
-              <div className="flex-1 flex justify-center">
-                <nav className="flex space-x-16">
-                  <a href="/" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Home</a>
-                  <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Cars</a>
-                  <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Booking</a>
-                  <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">My Account</a>
-                  <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Blog</a>
-                  <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">FAQ</a>
-                </nav>
-              </div>
+            </Link>
+          )}
+        </div>
+        {menuOpen && (
+          <div className="md:hidden bg-[rgba(41,41,41,0.8)] text-white flex flex-col items-center space-y-4 py-4 pr-6">
+            <a href="/" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Home</a>
+            <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Cars</a>
+            <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Booking</a>
+            <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">My Account</a>
+            <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Blog</a>
+            <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">FAQ</a>
+            {isAuth ? (
               <button
                 onClick={handleLogout}
-                className="bg-[#1ECB15] text-white flex items-center justify-center rounded w-28 h-9 leading-7 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105"
+                className="bg-[#1ECB15] text-white flex items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105"
               >
                 Logout
               </button>
-            </div>
+            ) : (
+              <Link href="/signin">
+                <div className="bg-[#1ECB15] text-white flex items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105">
+                  Sign In
+                </div>
+              </Link>
+            )}
           </div>
-        </div>
+        )}
       </div>
-
       <div className="flex justify-center py-12 bg-gray-100">
         <div className="w-full max-w-7xl flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6  pl-[2.5%]">
           <div className="bg-white shadow-md rounded-md p-6 w-full md:w-1/4 flex flex-col items-center">
@@ -97,45 +138,42 @@ const ProfilePage = () => {
             <p>{client.email}</p>
             <nav className="mt-6 w-full">
               <ul className="space-y-2">
-              <li>
-            <Link href="/profile">
-              <div
-                onClick={() => handleItemClick('profile')}
-                className={`cursor-pointer py-2 px-6 rounded transition ${
-                  activePage === 'profile' ? 'bg-[#1ECB15] text-white hover:bg-[#17ab12]' : 'bg-white text-black'
-                }`}
-              >
-                <FaUser className={`inline-block mr-2 ${activePage === 'profile' ? 'text-white' : 'text-[#1ECB15]'}`} />My Profile
-              </div>
-            </Link>
-          </li>
+                <li>
+                  <Link href="/profile">
+                    <div
+                      onClick={() => handleItemClick('profile')}
+                      className={`cursor-pointer py-2 px-6 rounded transition ${activePage === 'profile' ? 'bg-[#1ECB15] text-white hover:bg-[#17ab12]' : 'bg-white text-black'
+                        }`}
+                    >
+                      <FaUser className={`inline-block mr-2 ${activePage === 'profile' ? 'text-white' : 'text-[#1ECB15]'}`} />My Profile
+                    </div>
+                  </Link>
+                </li>
                 <li>
                   <Link href="/orders">
                     <div
                       onClick={() => handleItemClick('orders')}
-                      className={`cursor-pointer py-2 px-6 rounded transition ${
-                        activePage === 'orders' ? 'bg-[#1ECB15] text-white hover:bg-[#17ab12]' : 'bg-white text-black'
-                      }`}
+                      className={`cursor-pointer py-2 px-6 rounded transition ${activePage === 'orders' ? 'bg-[#1ECB15] text-white hover:bg-[#17ab12]' : 'bg-white text-black'
+                        }`}
                     >
-                <FaCalendar className={`inline-block mr-2 ${activePage === 'orders' ? 'text-white' : 'text-[#1ECB15]'}`} />My Orders
-                </div>
+                      <FaCalendar className={`inline-block mr-2 ${activePage === 'orders' ? 'text-white' : 'text-[#1ECB15]'}`} />My Orders
+                    </div>
                   </Link>
                 </li>
                 <li>
                   <Link href="/profile">
                     <div
                       onClick={() => handleItemClick('favorites')}
-                      className={`cursor-pointer py-2 px-6 rounded transition ${
-                        activePage === 'favorites' ? 'bg-[#1ECB15] text-white hover:bg-[#17ab12]' : 'bg-white text-black'
-                      }`}
+                      className={`cursor-pointer py-2 px-6 rounded transition ${activePage === 'favorites' ? 'bg-[#1ECB15] text-white hover:bg-[#17ab12]' : 'bg-white text-black'
+                        }`}
                     >
-                       <FaCar className={`inline-block mr-2 ${activePage === 'favorites' ? 'text-white' : 'text-[#1ECB15]'}`} /> My Favorite Cars
+                      <FaCar className={`inline-block mr-2 ${activePage === 'favorites' ? 'text-white' : 'text-[#1ECB15]'}`} /> My Favorite Cars
                     </div>
                   </Link>
                 </li>
                 <li>
                   <button onClick={handleLogout} className="bg-white text-black cursor-pointer py-2 px-6">
-                  <FaSignOutAlt className="inline-block mr-2 text-[#1ECB15]" /> Sign Out
+                    <FaSignOutAlt className="inline-block mr-2 text-[#1ECB15]" /> Sign Out
                   </button>
                 </li>
               </ul>

@@ -7,6 +7,7 @@ const AccueilHome = ({ isAuth, handleLogout }) => {
   return (
     <div className="h-screen bg-cover bg-center bg-[url('/images/11.jpg')]">
       <div className="bg-[rgba(41,41,41,0.38)] backdrop-blur-md bg-opacity-30 text-white flex justify-between items-center px-6 lg:px-12 py-4 shadow-md">
+      {/* <div className="bg-[rgba(41,41,41,0.38)] backdrop-blur-md bg-opacity-30 text-white flex justify-between items-center px-[12%] h-[102px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]"> si t7eb padding x*/}
         <div className="flex justify-center">
           <a href="#">
             <img src="/images/Container.png" alt="Logo" className='w-40 h-14' />
@@ -14,7 +15,7 @@ const AccueilHome = ({ isAuth, handleLogout }) => {
         </div>
         <div className="hidden md:flex flex-1 justify-center">
           <nav className="flex space-x-4 lg:space-x-20">
-            <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Home</a>
+            <a href="/" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Home</a>
             <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Cars</a>
             <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Booking</a>
             <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">My Account</a>
@@ -46,7 +47,7 @@ const AccueilHome = ({ isAuth, handleLogout }) => {
       </div>
       {menuOpen && (
         <div className="md:hidden bg-[rgba(41,41,41,0.8)] text-white flex flex-col items-center space-y-4 py-4 pr-6">
-          <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Home</a>
+          <a href="/" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Home</a>
           <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Cars</a>
           <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Booking</a>
           <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">My Account</a>

@@ -59,21 +59,20 @@ const Footer = () => {
             <a href="#"><img src="/images/x.png" alt="Twitter" className="w-[40px] h-[40px]" /></a>
             <a href="#"><img src="/images/linkedin.png" alt="LinkedIn" className="w-[40px] h-[40px]" /></a>
           </div>
-
-          {/* Subscription Section */}
-          <div className='py-20'>
           {/* Input with Sign In button */}
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Your email address"
-              className="w-[462px] h-[71.75px] top-[53px] left-[969px] px-[30px] gap-0 border-[1px] bg-[#FFFFFF21] border-[#FFFFFF21] text-white rounded-[60px] font-dm-sans text-[15px] font-normal leading-[19.53px] text-left"
-            />
-            <button className="absolute top-[10px] left-[356.69px] w-[95.31px] h-[51.75px] gap-0 border-[1px] border-[#FFFFFF21] bg-[#1ECB15] rounded-[60px] text-white text-[15px]">Sign In</button>
+          <div className="py-20 flex justify-center items-center">
+            <div className="flex items-center w-full max-w-lg sm:max-w-md h-[71.75px] bg-[#FFFFFF21] border border-[#FFFFFF21] rounded-[60px] overflow-hidden px-2">
+              <input
+                type="text"
+                placeholder="Your email address"
+                className="flex-grow h-full px-4 sm:px-2 text-white bg-transparent font-dm-sans text-[15px] font-normal leading-[19.53px] outline-none rounded-l-[60px]"
+              />
+              <button className="w-[95.31px] h-[51.75px] bg-[#1ECB15] text-white text-[15px] flex items-center justify-center rounded-[60px]">Sign In</button>
+            </div>
           </div>
+
         </div>
-        </div>
-        </div>
+      </div>
       {/* Arrow Section */}
       <div className="container mx-auto flex justify-end px-4 mt-4">
         <a href="#"><img src="/images/flech.png" alt="Arrow" className="w-[40px] h-[40px]" /></a>
@@ -87,7 +86,7 @@ const Footer = () => {
           </p>
         </div>
       </div>
-      
+
     </footer>
   );
 };

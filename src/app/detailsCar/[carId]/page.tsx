@@ -76,6 +76,7 @@ const CarDetailsPage = () => {
   const [car, setCar] = useState<Car | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (carId) {
@@ -111,43 +112,70 @@ const CarDetailsPage = () => {
 
 
   return (
-    <div>
-      <div className="relative h-[380px]">
-        <div className="absolute inset-0 bg-cover bg-center bg-[url('/images/11.jpg')]">
-          <div className="absolute inset-0">
-            <div className="bg-[rgba(41,41,41,0.38)] backdrop-blur-md bg-opacity-30 text-white flex justify-between items-center px-[12%] h-[102px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-              <div className="flex justify-center">
-                <a href="#">
-                  <img src="/images/Container.png" alt="Logo" className="w-[156px] h-[56px]" />
-                </a>
-              </div>
-              <div className="flex-1 flex justify-center">
-                <nav className="flex space-x-16">
-                  <a href="/" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Home</a>
-                  <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Cars</a>
-                  <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Booking</a>
-                  <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">My Account</a>
-                  <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Blog</a>
-                  <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">FAQ</a>
-                </nav>
-              </div>
-              {isAuth ? (
-                <button
-                  onClick={handleLogout}
-                  className="bg-[#1ECB15] text-white flex items-center justify-center rounded w-28 h-9 leading-7 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105"
-                >
-                  Logout
-                </button>
-              ) : (
-                <Link href="/signin">
-                  <div className="bg-[#1ECB15] text-white flex items-center justify-center rounded w-28 h-9 leading-7 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105">
-                    Sign In
-                  </div>
-                </Link>
-              )}
-            </div>
+<div>
+      <div className="h-[400px] bg-cover bg-center bg-[url('/images/11.jpg')]">
+        <div className="bg-[rgba(41,41,41,0.38)] backdrop-blur-md bg-opacity-30 text-white flex justify-between items-center px-6 lg:px-12 py-4 shadow-md">
+          <div className="flex justify-center">
+            <a href="#">
+              <img src="/images/Container.png" alt="Logo" className='w-40 h-14' />
+            </a>
           </div>
+          <div className="hidden md:flex flex-1 justify-center">
+            <nav className="flex space-x-4 lg:space-x-20">
+              <a href="/" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Home</a>
+              <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Cars</a>
+              <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Booking</a>
+              <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">My Account</a>
+              <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Blog</a>
+              <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">FAQ</a>
+            </nav>
+          </div>
+          <div className="md:hidden flex items-center ml-auto">
+            <button onClick={() => setMenuOpen(!menuOpen)} className="focus:outline-none">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </button>
+          </div>
+          {isAuth ? (
+            <button
+              onClick={handleLogout}
+              className="hidden md:flex bg-[#1ECB15] text-white items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link href="/signin">
+              <div className="hidden md:flex bg-[#1ECB15] text-white items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105">
+                Sign In
+              </div>
+            </Link>
+          )}
         </div>
+        {menuOpen && (
+          <div className="md:hidden bg-[rgba(41,41,41,0.8)] text-white flex flex-col items-center space-y-4 py-4 pr-6">
+            <a href="/" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Home</a>
+            <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Cars</a>
+            <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Booking</a>
+            <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">My Account</a>
+            <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Blog</a>
+            <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">FAQ</a>
+            {isAuth ? (
+              <button
+                onClick={handleLogout}
+                className="bg-[#1ECB15] text-white flex items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link href="/signin">
+                <div className="bg-[#1ECB15] text-white flex items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105">
+                  Sign In
+                </div>
+              </Link>
+            )}
+          </div>
+        )}
       </div>
       <div className="container mx-auto px-[12%] py-[2%] bg-gray-100">
         <h1 className="text-center text-3xl font-bold my-8 pb-8">My Orders</h1>

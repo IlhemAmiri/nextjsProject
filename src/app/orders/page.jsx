@@ -11,6 +11,8 @@ const OrderPage = () => {
   const [client, setClient] = useState(null);
   const [reservations, setReservations] = useState([]);
   const [error, setError] = useState('');
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isAuth, setIsAuth] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -47,6 +49,8 @@ const OrderPage = () => {
     };
 
     fetchClientData();
+    const authStatus = localStorage.getItem('isAuth') === 'true';
+    setIsAuth(authStatus);
   }, [router]);
 
   const handleItemClick = (page) => {
@@ -55,6 +59,7 @@ const OrderPage = () => {
 
   const handleLogout = () => {
     localStorage.clear();
+    setIsAuth(false);
     router.push('/signin');
   };
 
@@ -70,9 +75,9 @@ const OrderPage = () => {
     };
 
     const statusClassMap = {
-      completed: 'bg-[#00B74A]  text-white rounded-[800px] text-[14px]',
-      cancelled: 'bg-[#F93154] text-white rounded-[800px] text-[14px]',
-      scheduled: 'bg-[#FFA900] text-white rounded-[800px] text-[14px]'
+      completed: 'bg-[#00B74A] text-white rounded-full text-[14px]',
+      cancelled: 'bg-[#F93154] text-white rounded-full text-[14px]',
+      scheduled: 'bg-[#FFA900] text-white rounded-full text-[14px]'
     };
 
     return (
@@ -87,56 +92,90 @@ const OrderPage = () => {
 
   const renderOrders = (status) => {
     return reservations.filter(reservation => reservation.status === status).map((reservation, index) => (
-      <tr key={reservation._id} className="text-center text-[14px] mb-4 divide-y divide-gray-300">
-        <td className="p-2 font-bold">{index + 1}</td>
-        <td className="p-2 font-bold">{reservation.idVoiture ? `${reservation.idVoiture.marque} ${reservation.idVoiture.modele}` : 'Car details not available'}</td>
-        <td className="p-2">{reservation.lieuRamassage}</td>
-        <td className="p-2">{reservation.destination}</td>
-        <td className="p-2">{formatDate(reservation.dateDebut)}</td>
-        <td className="p-2">{formatDate(reservation.dateFin)}</td>
-        <td className="p-2">{reservation.tarifTotale} $ </td>
-        <td className="p-2">{reservation.chauffeur ? 'Yes' : 'No'}</td>
-        <td className="p-2">{reservation.commentaire}</td>
-        <td className="p-2">{renderOrderStatus(reservation.status)}</td>
-      </tr>
+      <div key={reservation._id} className="block lg:table-row mb-4 text-[15px] lg:mb-0">
+        <div className="block lg:table-cell p-2 font-bold">{index + 1}</div>
+        <div className="block lg:table-cell p-2 font-bold">{reservation.idVoiture ? `${reservation.idVoiture.marque} ${reservation.idVoiture.modele}` : 'Car details not available'}</div>
+        <div className="block lg:table-cell p-2">{reservation.lieuRamassage}</div>
+        <div className="block lg:table-cell p-2">{reservation.destination}</div>
+        <div className="block lg:table-cell p-2">{formatDate(reservation.dateDebut)}</div>
+        <div className="block lg:table-cell p-2">{formatDate(reservation.dateFin)}</div>
+        <div className="block lg:table-cell p-2">{reservation.tarifTotale} $</div>
+        <div className="block lg:table-cell p-2">{reservation.chauffeur ? 'Yes' : 'No'}</div>
+        <div className="block lg:table-cell p-2">{reservation.commentaire}</div>
+        <div className="block lg:table-cell p-2">{renderOrderStatus(reservation.status)}</div>
+      </div>
     ));
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="relative h-[380px]">
-        <div className="absolute inset-0 bg-cover bg-center bg-[url('/images/road.jpg')]">
-          <div className="absolute inset-0">
-            <div className="text-white flex justify-between items-center px-[12%] h-[102px]">
-              <div className="flex justify-center">
-                <a href="#">
-                  <img src="/images/Container.png" alt="Logo" className="w-[156px] h-[56px]" />
-                </a>
+    <div>
+      <div className="h-[400px] bg-cover bg-center bg-[url('/images/road.jpg')]">
+        <div className="text-white flex justify-between items-center px-6 lg:px-12 py-4">
+          <div className="flex justify-center">
+            <a href="#">
+              <img src="/images/Container.png" alt="Logo" className='w-40 h-14' />
+            </a>
+          </div>
+          <div className="hidden md:flex flex-1 justify-center">
+            <nav className="flex space-x-4 lg:space-x-20">
+              <a href="/" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Home</a>
+              <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Cars</a>
+              <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Booking</a>
+              <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">My Account</a>
+              <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Blog</a>
+              <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">FAQ</a>
+            </nav>
+          </div>
+          <div className="md:hidden flex items-center ml-auto">
+            <button onClick={() => setMenuOpen(!menuOpen)} className="focus:outline-none">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </button>
+          </div>
+          {isAuth ? (
+            <button
+              onClick={handleLogout}
+              className="hidden md:flex bg-[#1ECB15] text-white items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link href="/signin">
+              <div className="hidden md:flex bg-[#1ECB15] text-white items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105">
+                Sign In
               </div>
-              <div className="flex-1 flex justify-center">
-                <nav className="flex space-x-16">
-                  <a href="/" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Home</a>
-                  <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Cars</a>
-                  <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Booking</a>
-                  <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">My Account</a>
-                  <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Blog</a>
-                  <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">FAQ</a>
-                </nav>
-              </div>
+            </Link>
+          )}
+        </div>
+        {menuOpen && (
+          <div className="md:hidden bg-[rgba(41,41,41,0.8)] text-white flex flex-col items-center space-y-4 py-4 pr-6">
+            <a href="/" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Home</a>
+            <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Cars</a>
+            <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Booking</a>
+            <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">My Account</a>
+            <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Blog</a>
+            <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">FAQ</a>
+            {isAuth ? (
               <button
                 onClick={handleLogout}
-                className="bg-[#1ECB15] text-white flex items-center justify-center rounded w-28 h-9 leading-7 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105"
+                className="bg-[#1ECB15] text-white flex items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105"
               >
                 Logout
               </button>
-            </div>
+            ) : (
+              <Link href="/signin">
+                <div className="bg-[#1ECB15] text-white flex items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105">
+                  Sign In
+                </div>
+              </Link>
+            )}
           </div>
-        </div>
+        )}
       </div>
-
-      <div className="flex justify-center py-12 bg-gray-100">
-        <div className="w-full px-[3%] flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">
-          <div className="bg-white shadow-md rounded-md p-6 w-full md:w-1/4 flex flex-col items-center max-h-[600px]">
+      <div className="container mx-auto px-6 py-8">
+        <div className="flex flex-col md:flex-row md:space-y-0 md:space-x-6">
+          <div className="bg-white shadow-md rounded-md p-6 w-full md:w-1/5 flex flex-col items-center max-h-[600px]">
             <img src={client.image} alt="Profile" className="rounded-full w-32 h-32 border-4 border-[#1ECB15]" width={128} height={128} />
             <h2 className="text-xl font-semibold mt-4 text-center">{client.nom} {client.prenom}</h2>
             <p>{client.email}</p>
@@ -192,7 +231,6 @@ const OrderPage = () => {
             <OrderSection title="Completed Orders" status="confirmer" renderOrders={renderOrders} />
             <OrderSection title="Cancelled Orders" status="annuler" renderOrders={renderOrders} />
             {error && <p className="text-red-500 mt-4">{error}</p>}
-            
           </div>
         </div>
       </div>
@@ -202,26 +240,26 @@ const OrderPage = () => {
 
 const OrderSection = ({ title, status, renderOrders }) => (
   <div className="bg-gray-50 p-4 rounded-lg mb-6 text-center">
-    <h2 className="font-bold mt-4 text-[25px] p-4 text-center">{title}</h2>
-    <table className="table-auto w-full mt-2 mb-4 divide-y divide-gray-300">
-      <thead>
-        <tr className='text-[#ACACAC] text-[12px]'>
-          <th className="p-2 font-normal">#</th>
-          <th className="p-2 font-normal">Car Name</th>
-          <th className="p-2 font-normal">Pick Up Location</th>
-          <th className="p-2 font-normal">Drop Off Location</th>
-          <th className="p-2 font-normal">Pick Up Date</th>
-          <th className="p-2 font-normal">Return Date</th>
-          <th className="p-2 font-normal">Total Cost</th>
-          <th className="p-2 font-normal">With Driver</th>
-          <th className="p-2 font-normal">Comment</th>
-          <th className="p-2 font-normal">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {renderOrders(status)}
-      </tbody>
-    </table>
+    <h2 className="font-bold mt-4 text-[20px] p-4 text-center">{title}</h2>
+    <div className="table-responsive">
+      <div className="lg:table w-full mt-2 mb-4 divide-y divide-gray-300">
+        <div className="text-[#ACACAC] text-[15px] hidden lg:table-row">
+          <div className="lg:table-cell p-1 font-normal">#</div>
+          <div className="lg:table-cell p-1 font-normal">Car Name</div>
+          <div className="lg:table-cell p-1 font-normal">Pick Up Location</div>
+          <div className="lg:table-cell p-1 font-normal">Drop Off Location</div>
+          <div className="lg:table-cell p-1 font-normal">Pick Up Date</div>
+          <div className="lg:table-cell p-1 font-normal">Return Date</div>
+          <div className="lg:table-cell p-1 font-normal">Total Cost</div>
+          <div className="lg:table-cell p-1 font-normal">With Driver</div>
+          <div className="lg:table-cell p-1 font-normal">Comment</div>
+          <div className="lg:table-cell p-1 font-normal">Status</div>
+        </div>
+        <div className="lg:table-row-group">
+          {renderOrders(status)}
+        </div>
+      </div>
+    </div>
   </div>
 );
 

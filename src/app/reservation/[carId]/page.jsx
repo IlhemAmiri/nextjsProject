@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import Link from 'next/link';
 
 const ReservationPage = () => {
   const userId = localStorage.getItem('userId');
@@ -24,6 +25,7 @@ const ReservationPage = () => {
   });
   const [errors, setErrors] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const fetchCarDetails = async () => {
@@ -115,151 +117,166 @@ const ReservationPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center">
-      <div className="relative h-[380px] w-full">
-        <div className="absolute inset-0 bg-cover bg-center bg-[url('/images/road.jpg')]">
-          <div className="absolute inset-0">
-            <div className="text-white flex justify-between items-center px-[12%] h-[102px]">
-              <div className="flex justify-center">
-                <a href="#">
-                  <img src="/images/Container.png" alt="Logo" className="w-[156px] h-[56px]" />
-                </a>
+    <div>
+      <div className="h-[400px] bg-cover bg-center bg-[url('/images/road.jpg')]">
+        <div className=" text-white flex justify-between items-center px-6 lg:px-12 py-4">
+          <div className="flex justify-center">
+            <a href="#">
+              <img src="/images/Container.png" alt="Logo" className='w-40 h-14' />
+            </a>
+          </div>
+          <div className="hidden md:flex flex-1 justify-center">
+            <nav className="flex space-x-4 lg:space-x-20">
+              <a href="/" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Home</a>
+              <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Cars</a>
+              <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Booking</a>
+              <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">My Account</a>
+              <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Blog</a>
+              <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">FAQ</a>
+            </nav>
+          </div>
+          <div className="md:hidden flex items-center ml-auto">
+            <button onClick={() => setMenuOpen(!menuOpen)} className="focus:outline-none">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </button>
+          </div>
+          {isAuth ? (
+            <button
+              onClick={handleLogout}
+              className="hidden md:flex bg-[#1ECB15] text-white items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link href="/signin">
+              <div className="hidden md:flex bg-[#1ECB15] text-white items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105">
+                Sign In
               </div>
-              <div className="flex-1 flex justify-center">
-                <nav className="flex space-x-16">
-                  <a href="/" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Home</a>
-                  <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Cars</a>
-                  <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Booking</a>
-                  <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">My Account</a>
-                  <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">Blog</a>
-                  <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-[16px] leading-[27.2px]">FAQ</a>
-                </nav>
-              </div>
+            </Link>
+          )}
+        </div>
+        {menuOpen && (
+          <div className="md:hidden bg-[rgba(41,41,41,0.8)] text-white flex flex-col items-center space-y-4 py-4 pr-6">
+            <a href="/" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Home</a>
+            <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Cars</a>
+            <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Booking</a>
+            <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">My Account</a>
+            <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Blog</a>
+            <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">FAQ</a>
+            {isAuth ? (
               <button
                 onClick={handleLogout}
-                className="bg-[#1ECB15] text-white flex items-center justify-center rounded w-28 h-9 leading-7 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105"
+                className="bg-[#1ECB15] text-white flex items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105"
               >
                 Logout
               </button>
-            </div>
+            ) : (
+              <Link href="/signin">
+                <div className="bg-[#1ECB15] text-white flex items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105">
+                  Sign In
+                </div>
+              </Link>
+            )}
           </div>
-        </div>
+        )}
       </div>
-      <div className="container mx-auto px-4 py-8 flex justify-center items-center">
-        <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg">
-          <h1 className="text-3xl font-bold mb-4 text-center">Booking a Car</h1>
+      <div className="container mx-auto px-4 py-8 flex justify-center items-center bg-gray-100">
+        <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-4xl">
+          <h1 className="text-3xl font-bold mb-8 text-center">Booking a Car</h1>
           {car && (
-            <div className="mb-4">
-              <div className="flex items-center mb-2">
-                <img src={car.image} alt={`${car.marque} ${car.modele}`} className="w-16 h-16 mr-4" />
-                <span className="text-xl font-semibold">{`${car.marque} ${car.modele} - $${car.prixParJ}`}</span>
+            <div className="mb-8 flex items-center">
+              <img src={car.image} alt={`${car.marque} ${car.modele}`} className="w-24 h-20 mr-6 rounded-lg shadow-md" />
+              <div>
+                <h2 className="text-2xl font-semibold">{`${car.marque} ${car.modele}`}</h2>
+                <p className="text-gray-700">Price per day: ${car.prixParJ}</p>
               </div>
             </div>
           )}
           <form onSubmit={handleSubmit}>
-            {errors.length > 0 && (
-              <div className="mb-4 text-red-500">
-                {errors.map((error, index) => (
-                  <p key={index}>{error}</p>
-                ))}
-              </div>
-            )}
-            <div className="mb-4">
-              <label htmlFor="lieuRamassage" className="block text-sm font-medium text-gray-700">
-                Pick Up Location
-              </label>
-              <input
-                type="text"
-                id="lieuRamassage"
-                name="lieuRamassage"
-                value={formData.lieuRamassage}
-                onChange={handleChange}
-                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-                placeholder="Enter your pickup location"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="destination" className="block text-sm font-medium text-gray-700">
-                Destination
-              </label>
-              <input
-                type="text"
-                id="destination"
-                name="destination"
-                value={formData.destination}
-                onChange={handleChange}
-                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-                placeholder="Enter your destination"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="dateDebut" className="block text-sm font-medium text-gray-700">
-                Pick Up Date & Time
-              </label>
-              <div className="flex space-x-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="block text-gray-700 font-bold mb-2">Pick-up Date</label>
                 <DatePicker
                   selected={formData.dateDebut}
                   onChange={(date) => handleDateChange('dateDebut', date)}
-                  showTimeSelect
-                  dateFormat="Pp"
-                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                  className="w-full px-3 py-2 border rounded-lg"
                 />
               </div>
-            </div>
-            <div className="mb-4">
-              <label htmlFor="dateFin" className="block text-sm font-medium text-gray-700">
-                Return Date & Time
-              </label>
-              <div className="flex space-x-2">
+              <div>
+                <label className="block text-gray-700 font-bold mb-2">Drop-off Date</label>
                 <DatePicker
                   selected={formData.dateFin}
                   onChange={(date) => handleDateChange('dateFin', date)}
-                  showTimeSelect
-                  dateFormat="Pp"
-                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 font-bold mb-2">Pick-up Location</label>
+                <input
+                  type="text"
+                  name="lieuRamassage"
+                  value={formData.lieuRamassage}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 font-bold mb-2">Destination</label>
+                <input
+                  type="text"
+                  name="destination"
+                  value={formData.destination}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-lg"
                 />
               </div>
             </div>
             <div className="mb-4">
-              <label htmlFor="chauffeur" className="block text-sm font-medium text-gray-700">
-                Chauffeur Required
-              </label>
-              <input
-                type="checkbox"
-                id="chauffeur"
-                name="chauffeur"
-                checked={formData.chauffeur}
-                onChange={handleChange}
-                className="mt-1 p-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="commentaire" className="block text-sm font-medium text-gray-700">
-                Comment
-              </label>
+              <label className="block text-gray-700 font-bold mb-2">Comments</label>
               <textarea
-                id="commentaire"
                 name="commentaire"
                 value={formData.commentaire}
                 onChange={handleChange}
-                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-                rows={4}
-                placeholder="Need a baby seat"
-              />
+                className="w-full px-3 py-2 border rounded-lg"
+              ></textarea>
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Total Price: ${totalPrice.toFixed(2)}
+              <label className="block text-gray-700 font-bold mb-2">
+                <input
+                  type="checkbox"
+                  name="chauffeur"
+                  checked={formData.chauffeur}
+                  onChange={handleChange}
+                  className="mr-2 leading-tight"
+                />
+                Need a driver
               </label>
             </div>
-            <button
-              type="submit"
-              className="bg-[#1ECB15] text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors w-full"
-            >
-              Book Now
-            </button>
+            <div className="mb-4">
+              <p className="text-xl font-semibold">Total Price: ${totalPrice}</p>
+            </div>
+            <div className="mb-4">
+              {errors.length > 0 && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                  <strong className="font-bold">Error:</strong>
+                  <ul>
+                    {errors.map((error, index) => (
+                      <li key={index}>{error}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+            <div className="text-center">
+              <button
+                type="submit"
+                className="bg-[#1ECB15] text-white font-bold py-2 px-4 rounded-full hover:bg-green-700 transition duration-300"
+              >
+                Book Now
+              </button>
+            </div>
           </form>
         </div>
       </div>
