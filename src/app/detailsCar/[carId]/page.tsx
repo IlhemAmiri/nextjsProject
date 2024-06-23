@@ -126,7 +126,7 @@ const CarDetailsPage = () => {
               <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Cars</a>
               <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Booking</a>
               <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">My Account</a>
-              <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Blog</a>
+              <a href="/blogs" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Blog</a>
               <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">FAQ</a>
             </nav>
           </div>
@@ -158,7 +158,7 @@ const CarDetailsPage = () => {
             <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Cars</a>
             <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Booking</a>
             <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">My Account</a>
-            <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Blog</a>
+            <a href="/blogs" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Blog</a>
             <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">FAQ</a>
             {isAuth ? (
               <button
