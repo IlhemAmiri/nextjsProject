@@ -22,6 +22,9 @@ interface Car {
   accessoiresOptionSupp: string;
   prixParJ: number;
   image: string;
+  image2: string;
+  image3: string;
+  image4: string;
   conditionDeLocation: string;
   note?: number;
   offrePromotion: string;
@@ -112,7 +115,7 @@ const CarDetailsPage = () => {
 
 
   return (
-<div>
+    <div>
       <div className="h-[400px] bg-cover bg-center bg-[url('/images/11.jpg')]">
         <div className="bg-[rgba(41,41,41,0.38)] backdrop-blur-md bg-opacity-30 text-white flex justify-between items-center px-6 lg:px-12 py-4 shadow-md">
           <div className="flex justify-center">
@@ -185,9 +188,21 @@ const CarDetailsPage = () => {
               <img src={car.image} alt={car.modele} className="w-full h-80 object-cover rounded-lg shadow-lg" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <img src={car.image} alt={car.modele} className="w-full h-40 object-cover rounded-lg shadow-lg" />
-              <img src={car.image} alt={car.modele} className="w-full h-40 object-cover rounded-lg shadow-lg" />
-              <img src={car.image} alt={car.modele} className="w-full h-40 object-cover rounded-lg shadow-lg" />
+              <img
+                src={car.image2 ? car.image2 : car.image}
+                alt={car.modele}
+                className="w-full h-40 object-cover rounded-lg shadow-lg"
+              />
+              <img
+                src={car.image3 ? car.image3 : car.image}
+                alt={car.modele}
+                className="w-full h-40 object-cover rounded-lg shadow-lg"
+              />
+              <img
+                src={car.image4 ? car.image4 : car.image}
+                alt={car.modele}
+                className="w-full h-40 object-cover rounded-lg shadow-lg"
+              />
             </div>
           </div>
           <div className="bg-white shadow-md rounded-lg p-8">
@@ -227,7 +242,7 @@ const CarDetailsPage = () => {
             <div className="mt-8">
               <Link href={`/reservation/${carId}`}>
                 <div className="bg-[#1ECB15] text-white text-center px-4 py-2 rounded shadow-md hover:bg-[#17a413] transition cursor-pointer">
-                Book Now
+                  Book Now
                 </div>
               </Link>
             </div>
