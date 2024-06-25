@@ -28,6 +28,9 @@ const AddBlogPage = () => {
 
         const authStatus = localStorage.getItem('isAuth') === 'true';
         setIsAuth(authStatus);
+        // Automatically set the date to today's date
+        const today = new Date().toISOString().split('T')[0];
+        setDate(today);
     }, [router]);
 
     const handleSubmit = async (e) => {
@@ -151,7 +154,7 @@ const AddBlogPage = () => {
                                 required
                             />
                         </div>
-                        <div className="col-span-2">
+                        {/* <div className="col-span-2">
                             <label className="block text-gray-700">Date</label>
                             <input
                                 type="date"
@@ -160,7 +163,7 @@ const AddBlogPage = () => {
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                                 required
                             />
-                        </div>
+                        </div> */}
                         <div className="col-span-2">
                             <label className="block text-gray-700">Category</label>
                             <input
