@@ -5,13 +5,21 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FaUser, FaCalendar, FaCar, FaSignOutAlt } from 'react-icons/fa';
 
-const ProfilePage = () => {
-  const [client, setClient] = useState(null);
+const UpdateUserPage = ({ params }) => {
+  const [client, setClient] = useState({
+    nom: '',
+    prenom: '',
+    email: '',
+    numTel: '',
+    adresse: '',
+    image: null,
+  });
   const [error, setError] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
   const [activePage, setActivePage] = useState('profile');
   const router = useRouter();
+  const { clientId } = params;
 
   useEffect(() => {
     const fetchClientData = async () => {
@@ -23,7 +31,7 @@ const ProfilePage = () => {
 
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:3001/users/clients/${userId}`, {
+        const response = await fetch(`http://localhost:3001/users/clients/${clientId}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -45,15 +53,11 @@ const ProfilePage = () => {
     fetchClientData();
     const authStatus = localStorage.getItem('isAuth') === 'true';
     setIsAuth(authStatus);
-  }, [router]);
+  }, [router, clientId]);
 
   const handleItemClick = (page) => {
-    setActivePage(page); // Met à jour la page active lors du clic sur un élément
+    setActivePage(page);
   };
-
-  if (!client) {
-    return <div>Loading...</div>;
-  }
 
   const handleLogout = () => {
     localStorage.clear();
@@ -61,30 +65,52 @@ const ProfilePage = () => {
     router.push('/signin');
   };
 
-  const handleDelete = async (userId) => {
+  const handleFileChange = (e) => {
+    setClient({ ...client, image: e.target.files[0] });
+  };
+
+  const handleUpdate = async () => {
+    const formData = new FormData();
+    formData.append('nom', client.nom);
+    formData.append('prenom', client.prenom);
+    formData.append('email', client.email);
+    formData.append('numTel', client.numTel);
+    formData.append('adresse', client.adresse);
+    if (client.image) {
+      formData.append('image', client.image);
+    }
+
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/users/clients/${userId}`, {
-        method: 'DELETE',
+      const response = await fetch(`http://localhost:3001/users/clients/${clientId}`, {
+        method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
         },
+        body: formData,
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete client');
+        throw new Error('Failed to update client data');
       }
 
-      alert(`Le client avec l'identifiant ${userId} a été supprimé`);
-      localStorage.clear();
-      router.push('/signup');
+      const data = await response.json();
+      setClient(data);
+      
+      const role = localStorage.getItem('role');
+      if (role === 'admin') {
+        router.push('/allUsers');
+      } else {
+        router.push('/profile');
+      }
     } catch (error) {
-      console.error(error);
-      alert('An error occurred while deleting the client');
+      setError(error.message);
     }
   };
 
-
+  if (!client) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
@@ -189,76 +215,99 @@ const ProfilePage = () => {
                       className={`cursor-pointer py-2 px-6 rounded transition ${activePage === 'favorites' ? 'bg-[#1ECB15] text-white hover:bg-[#17ab12]' : 'bg-white text-black'
                         }`}
                     >
-                      <FaCar className={`inline-block mr-2 ${activePage === 'favorites' ? 'text-white' : 'text-[#1ECB15]'}`} /> My Favorite Cars
+                      <FaCar className={`inline-block mr-2 ${activePage === 'favorites' ? 'text-white' : 'text-[#1ECB15]'}`} />My Favorite Cars
                     </div>
                   </Link>
                 </li>
                 <li>
-                  <button onClick={handleLogout} className="bg-white text-black cursor-pointer py-2 px-6">
-                    <FaSignOutAlt className="inline-block mr-2 text-[#1ECB15]" /> Sign Out
-                  </button>
-                </li>
-                <li>
-                  <button onClick={() => handleDelete(client._id)} className=" text-red-500 py-1 px-2 rounded-full ml-2">
-                    Delete my Account
-                  </button>
+                  <div
+                    onClick={handleLogout}
+                    className="cursor-pointer py-2 px-6 rounded transition bg-white text-black hover:bg-[#1ECB15] hover:text-white"
+                  >
+                    <FaSignOutAlt className="inline-block mr-2 text-[#1ECB15]" />Logout
+                  </div>
                 </li>
               </ul>
             </nav>
           </div>
-          <div className="bg-white shadow-md rounded-md p-6 w-full md:w-2/3">
-            <h1 className="text-2xl font-bold mb-4">My Profile</h1>
-            <div className="flex mb-4">
-              <div className="text-center cursor-pointer border-b-2 border-[#1ECB15] text-[#1ECB15] font-semibold px-4">Profile</div>
-              <div className="text-center cursor-pointer border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 px-4">Notifications</div>
-            </div>
-            <div className="bg-gray-50 p-6 rounded-md">
-              <div className="grid grid-cols-2 gap-4">
+          <div className="bg-white shadow-md rounded-md p-6 w-full md:w-3/4">
+            <h2 className="text-2xl font-semibold mb-4">Update Client Information</h2>
+            {error && <div className="text-red-500 mb-4">{error}</div>}
+            <form>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-gray-700">Email Address</label>
-                  <input type="email" value={client.email} className="mt-1 p-2 w-full border rounded-md" readOnly />
+                  <label htmlFor="nom" className="block font-medium mb-2">First Name</label>
+                  <input
+                    type="text"
+                    id="nom"
+                    className="w-full border rounded px-3 py-2"
+                    value={client.nom}
+                    onChange={(e) => setClient({ ...client, nom: e.target.value })}
+                  />
                 </div>
                 <div>
-                  <label className="block text-gray-700">CIN</label>
-                  <input type="text" value={client.CIN} className="mt-1 p-2 w-full border rounded-md" readOnly />
+                  <label htmlFor="prenom" className="block font-medium mb-2">Last Name</label>
+                  <input
+                    type="text"
+                    id="prenom"
+                    className="w-full border rounded px-3 py-2"
+                    value={client.prenom}
+                    onChange={(e) => setClient({ ...client, prenom: e.target.value })}
+                  />
                 </div>
                 <div>
-                  <label className="block text-gray-700">Passport</label>
-                  <input type="text" value={client.passport} className="mt-1 p-2 w-full border rounded-md" readOnly />
+                  <label htmlFor="email" className="block font-medium mb-2">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    className="w-full border rounded px-3 py-2"
+                    value={client.email}
+                    onChange={(e) => setClient({ ...client, email: e.target.value })}
+                  />
                 </div>
                 <div>
-                  <label className="block text-gray-700">Address</label>
-                  <input type="text" value={client.adresse} className="mt-1 p-2 w-full border rounded-md" readOnly />
+                  <label htmlFor="phone" className="block font-medium mb-2">Phone</label>
+                  <input
+                    type="text"
+                    id="phone"
+                    className="w-full border rounded px-3 py-2"
+                    value={client.numTel}
+                    onChange={(e) => setClient({ ...client, numTel: e.target.value })}
+                  />
                 </div>
                 <div>
-                  <label className="block text-gray-700">Phone Number</label>
-                  <input type="text" value={client.numTel} className="mt-1 p-2 w-full border rounded-md" readOnly />
+                  <label htmlFor="adresse" className="block font-medium mb-2">Address</label>
+                  <input
+                    type="text"
+                    id="adresse"
+                    className="w-full border rounded px-3 py-2"
+                    value={client.adresse}
+                    onChange={(e) => setClient({ ...client, adresse: e.target.value })}
+                  />
                 </div>
                 <div>
-                  <label className="block text-gray-700">Date of Birth</label>
-                  <input type="date" value={new Date(client.dateNaissance).toISOString().substring(0, 10)} className="mt-1 p-2 w-full border rounded-md" readOnly />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Driver's License Number</label>
-                  <input type="text" value={client.numPermisConduire} className="mt-1 p-2 w-full border rounded-md" readOnly />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Driver's License Expiry Date</label>
-                  <input type="date" value={new Date(client.dateExpirationPermis).toISOString().substring(0, 10)} className="mt-1 p-2 w-full border rounded-md" readOnly />
+                  <label htmlFor="image" className="block font-medium mb-2">Profile Picture</label>
+                  <input
+                    type="file"
+                    id="image"
+                    className="w-full border rounded px-3 py-2"
+                    onChange={handleFileChange}
+                  />
                 </div>
               </div>
-              <div className="mt-6">
-                <Link href={`/updateUser/${client._id}`}>
-                  <button className="bg-[#1ECB15] text-white font-bold py-2 px-6 rounded hover:bg-[#17ab12] transition">Update Profile</button>
-                </Link>
-              </div>
-            </div>
+              <button
+                type="button"
+                onClick={handleUpdate}
+                className="mt-6 w-full bg-[#1ECB15] text-white py-2 px-4 rounded transition-transform hover:scale-105"
+              >
+                Update Information
+              </button>
+            </form>
           </div>
         </div>
-        {error && <div className="text-red-500 mt-4">{error}</div>}
       </div>
     </div>
   );
 };
 
-export default ProfilePage;
+export default UpdateUserPage;

@@ -4,6 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation'; // Use next/navigation for App Router
 import axios from 'axios';
 import Link from 'next/link';
+import StarRating1 from '../../component/StarRating';
+import Note from '../../component/Note';
+
 
 interface Car {
   _id: string;
@@ -29,10 +32,19 @@ interface Car {
   note?: number;
   offrePromotion: string;
 }
+interface Note {
+  _id: string;
+  note: number;
+  idClient: string;
+  commentaire?: string;
+}
+
 const StarRating = ({ rating }: { rating: number }) => {
   const fullStars = Math.floor(rating);
-  const halfStar = rating % 1 !== 0;
-  const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+  const quarterStar = (rating % 1) >= 0.25 && (rating % 1) < 0.5;
+  const halfStar = (rating % 1) >= 0.5 && (rating % 1) < 0.75;
+  const threeQuarterStar = (rating % 1) >= 0.75;
+  const emptyStars = 5 - fullStars - (quarterStar || halfStar || threeQuarterStar ? 1 : 0);
 
   return (
     <div className="flex items-center">
@@ -48,13 +60,46 @@ const StarRating = ({ rating }: { rating: number }) => {
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.357 4.167a1 1 0 00.95.69h4.389c.969 0 1.372 1.24.588 1.81l-3.557 2.581a1 1 0 00-.364 1.118l1.358 4.167c.3.921-.755 1.688-1.54 1.118l-3.557-2.581a1 1 0 00-1.175 0l-3.557 2.581c-.784.57-1.838-.197-1.54-1.118l1.358-4.167a1 1 0 00-.364-1.118L2.064 9.594c-.784-.57-.381-1.81.588-1.81h4.389a1 1 0 00.95-.69l1.357-4.167z" />
           </svg>
         ))}
+      {quarterStar && (
+        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+          <defs>
+            <linearGradient id="quarterGrad">
+              <stop offset="25%" stopColor="currentColor" className="text-yellow-500" />
+              <stop offset="25%" stopColor="currentColor" className="text-gray-300" />
+            </linearGradient>
+          </defs>
+          <path
+            fill="url(#quarterGrad)"
+            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.357 4.167a1 1 0 00.95.69h4.389c.969 0 1.372 1.24.588 1.81l-3.557 2.581a1 1 0 00-.364 1.118l1.358 4.167c.3.921-.755 1.688-1.54 1.118l-3.557-2.581a1 1 0 00-1.175 0l-3.557 2.581c-.784.57-1.838-.197-1.54-1.118l1.358-4.167a1 1 0 00-.364-1.118L2.064 9.594c-.784-.57-.381-1.81.588-1.81h4.389a1 1 0 00.95-.69l1.357-4.167z"
+          />
+        </svg>
+      )}
       {halfStar && (
-        <svg
-          className="w-6 h-6 text-yellow-500"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.357 4.167a1 1 0 00.95.69h4.389c.969 0 1.372 1.24.588 1.81l-3.557 2.581a1 1 0 00-.364 1.118l1.358 4.167c.3.921-.755 1.688-1.54 1.118l-3.557-2.581a1 1 0 00-1.175 0l-3.557 2.581c-.784.57-1.838-.197-1.54-1.118l1.358-4.167a1 1 0 00-.364-1.118L2.064 9.594c-.784-.57-.381-1.81.588-1.81h4.389a1 1 0 00.95-.69l1.357-4.167z" />
+        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+          <defs>
+            <linearGradient id="halfGrad">
+              <stop offset="50%" stopColor="currentColor" className="text-yellow-500" />
+              <stop offset="50%" stopColor="currentColor" className="text-gray-300" />
+            </linearGradient>
+          </defs>
+          <path
+            fill="url(#halfGrad)"
+            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.357 4.167a1 1 0 00.95.69h4.389c.969 0 1.372 1.24.588 1.81l-3.557 2.581a1 1 0 00-.364 1.118l1.358 4.167c.3.921-.755 1.688-1.54 1.118l-3.557-2.581a1 1 0 00-1.175 0l-3.557 2.581c-.784.57-1.838-.197-1.54-1.118l1.358-4.167a1 1 0 00-.364-1.118L2.064 9.594c-.784-.57-.381-1.81.588-1.81h4.389a1 1 0 00.95-.69l1.357-4.167z"
+          />
+        </svg>
+      )}
+      {threeQuarterStar && (
+        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+          <defs>
+            <linearGradient id="threeQuarterGrad">
+              <stop offset="75%" stopColor="currentColor" className="text-yellow-500" />
+              <stop offset="75%" stopColor="currentColor" className="text-gray-300" />
+            </linearGradient>
+          </defs>
+          <path
+            fill="url(#threeQuarterGrad)"
+            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.357 4.167a1 1 0 00.95.69h4.389c.969 0 1.372 1.24.588 1.81l-3.557 2.581a1 1 0 00-.364 1.118l1.358 4.167c.3.921-.755 1.688-1.54 1.118l-3.557-2.581a1 1 0 00-1.175 0l-3.557 2.581c-.784.57-1.838-.197-1.54-1.118l1.358-4.167a1 1 0 00-.364-1.118L2.064 9.594c-.784-.57-.381-1.81.588-1.81h4.389a1 1 0 00.95-.69l1.357-4.167z"
+          />
         </svg>
       )}
       {Array(emptyStars)
@@ -74,12 +119,30 @@ const StarRating = ({ rating }: { rating: number }) => {
 };
 
 
+
 const CarDetailsPage = () => {
-  const { carId } = useParams(); // Use useParams to get URL parameters
+  const [hasRated, setHasRated] = useState(false);
+  const { carId } = useParams();
   const [car, setCar] = useState<Car | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mainImage, setMainImage] = useState<string>('');
+  const [showRatingForm, setShowRatingForm] = useState(false);
+  const [rating, setRating] = useState<number>(0);
+  const [comment, setComment] = useState<string>('');
+  const [userId, setUserId] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [notes, setNotes] = useState<Note[]>([]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setUserId(localStorage.getItem('userId'));
+      setToken(localStorage.getItem('token'));
+      const authStatus = localStorage.getItem('isAuth') === 'true';
+      setIsAuth(authStatus);
+    }
+  }, []);
 
   useEffect(() => {
     if (carId) {
@@ -87,6 +150,7 @@ const CarDetailsPage = () => {
         try {
           const response = await axios.get(`http://localhost:3001/cars/${carId}`);
           setCar(response.data);
+          setMainImage(response.data.image);
           setLoading(false);
         } catch (error) {
           console.error('There was an error fetching the car details!', error);
@@ -100,6 +164,21 @@ const CarDetailsPage = () => {
     }
   }, [carId]);
 
+  useEffect(() => {
+    if (carId) {
+      axios.get(`http://localhost:3001/notes/car/${carId}`)
+        .then(response => {
+          setNotes(response.data);
+          setLoading(false);
+        })
+        .catch(error => {
+          console.error("There was an error fetching the notes!", error);
+          setLoading(false);
+        });
+    }
+  }, [carId]);
+
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -112,6 +191,40 @@ const CarDetailsPage = () => {
     setIsAuth(false);
   };
 
+
+  const handleRatingSubmit = async () => {
+    try {
+      const submitResponse = await axios.post('http://localhost:3001/notes', {
+        idClient: userId,
+        idVoiture: carId,
+        note: rating,
+        commentaire: comment,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (submitResponse.status === 201) {
+        alert('Rating submitted successfully');
+        setShowRatingForm(false);
+        setCar((prevCar) => prevCar ? { ...prevCar, note: (prevCar.note || 0) + rating / 2 } : null);
+        setHasRated(true);
+        window.location.reload();
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const { status, data } = error.response;
+        if (status === 400 && data.message.includes('Le client a déjà donné une note pour cette voiture.')) {
+          alert('You have already submitted a rating for this car.');
+        } else {
+          alert('An error occurred while submitting your rating. Please try again.');
+        }
+      } else {
+        alert('An error occurred while setting up your request. Please try again.');
+      }
+    }
+  };
 
 
   return (
@@ -233,12 +346,22 @@ const CarDetailsPage = () => {
                 <p className="mb-4">{car.offrePromotion}</p>
               </div>
             )}
-            {car.note && (
-              <div className="mt-4">
-                <h3 className="text-xl font-semibold mb-2">Rating</h3>
-                <StarRating rating={car.note} />
-              </div>
-            )}
+            <div className="mt-4 flex items-center justify-between">
+              {car.note && (
+                <div className="mr-4">
+                  <h3 className="text-xl font-semibold mb-2">Rating</h3>
+                  <StarRating rating={car.note} />
+                </div>
+              )}
+              <button
+                onClick={() => setShowRatingForm(true)}
+                className="text-[#1ECB15] rounded pl-[50px] ml-auto"
+              >
+                Add Your Rate
+              </button>
+            </div>
+
+
             <div className="mt-8">
               <Link href={`/reservation/${carId}`}>
                 <div className="bg-[#1ECB15] text-white text-center px-4 py-2 rounded shadow-md hover:bg-[#17a413] transition cursor-pointer">
@@ -248,6 +371,63 @@ const CarDetailsPage = () => {
             </div>
           </div>
         </div>
+      </div>
+      {showRatingForm && !hasRated && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">Rate this Car</h2>
+            <label className="block mb-2">
+              <span className="text-gray-700 font-medium">Rating (1-5):</span>
+              <StarRating1 rating={rating} setRating={setRating} />
+            </label>
+            <label className="block mb-4">
+              <span className="text-gray-700 font-medium">Comment:</span>
+              <textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              />
+            </label>
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setShowRatingForm(false)}
+                className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleRatingSubmit}
+                className="px-4 py-2 bg-[#1ECB15] text-white rounded hover:bg-[#17a612]"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {hasRated && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">You have already rated this car.</h2>
+            <button
+              onClick={() => setShowRatingForm(false)}
+              className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+      <div className="container mx-auto p-4">
+        <h1 className="text-2xl font-bold mb-4">Notes for Car: {car.marque} {car.modele}</h1>
+        {notes.length === 0 ? (
+          <p>No notes available for this car.</p>
+        ) : (
+          notes.map(note => (
+            <Note key={note._id} note={note} />
+          ))
+        )}
       </div>
     </div>
   );
