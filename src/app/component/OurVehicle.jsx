@@ -1,8 +1,84 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { FaArrowUp } from 'react-icons/fa';
+import axios from 'axios';
 
 const OurVehicle = ({ cars }) => {
+  const [favourites, setFavourites] = useState(new Set());
+
+  useEffect(() => {
+    const fetchFavourites = async () => {
+      const clientId = localStorage.getItem('userId');
+      const token = localStorage.getItem('token');
+      if (!clientId || !token) {
+        console.error('Client ID or token is missing');
+        return;
+      }
+
+      try {
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        };
+
+        const response = await axios.get(`http://localhost:3001/favorite-cars/client/${clientId}`, config);
+        const favouriteCars = response.data.map(fav => fav.idVoiture);
+        setFavourites(new Set(favouriteCars));
+      } catch (error) {
+        console.error('Error fetching favourites:', error);
+      }
+    };
+
+    fetchFavourites();
+  }, []);
+
+  const handleToggleFavourite = async (carId) => {
+    const clientId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+    if (!clientId || !token) {
+      console.error('Client ID or token is missing');
+      alert('Please log in to add to favourites');
+      return;
+    }
+
+    const isFavourite = favourites.has(carId);
+    try {
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      };
+
+      if (!isFavourite) {
+        // Add favourite
+        await axios.post('http://localhost:3001/favorite-cars', { idClient: clientId, idVoiture: carId }, config);
+        setFavourites((prev) => {
+          const newFavourites = new Set(prev);
+          newFavourites.add(carId);
+          return newFavourites;
+        });
+        console.log(`Car ${carId} added to favourites`);
+      } else {
+        // Remove favourite
+        await axios.delete('http://localhost:3001/favorite-cars', {
+          data: { idClient: clientId, idVoiture: carId },
+          ...config,
+        });
+        setFavourites((prev) => {
+          const newFavourites = new Set(prev);
+          newFavourites.delete(carId);
+          return newFavourites;
+        });
+        console.log(`Car ${carId} removed from favourites`);
+      }
+    } catch (error) {
+      console.error('Error toggling favourite:', error);
+      alert(`An error occurred while toggling favourite status: ${error.response?.data?.message || error.message}`);
+    }
+  };
+
   return (
     <div className="bg-gray-100">
       <div className="pt-16 px-[12%]">
@@ -37,8 +113,8 @@ const OurVehicle = ({ cars }) => {
                   Great Price
                 </div>
                 <div className="absolute top-0 right-0 p-2">
-                  <button className="mt-2">
-                    <img src="/images/save.png" alt="" />
+                  <button onClick={() => handleToggleFavourite(car._id)}>
+                    <img src={favourites.has(car._id) ? "/images/save2.png" : "/images/save.png"} alt="Favourite" />
                   </button>
                 </div>
               </div>

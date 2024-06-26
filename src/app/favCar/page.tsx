@@ -5,14 +5,29 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FaUser, FaCalendar, FaCar, FaSignOutAlt } from 'react-icons/fa';
 import axios from 'axios';
+import { FaArrowUp } from 'react-icons/fa';
 
-const OrderPage = () => {
-  const [activePage, setActivePage] = useState('orders');
-  const [client, setClient] = useState(null);
-  const [reservations, setReservations] = useState([]);
+interface Car {
+  _id: string;
+  image: string;
+  modele: string;
+  marque: string;
+  categorie: string;
+  kilometrage: number;
+  typeCarburant: string;
+  typeTransmission: string;
+  anneeFabrication: number;
+  prixParJ: number;
+}
+
+const FavCarPage = () => {
+  const [activePage, setActivePage] = useState('favorites');
+  const [client, setClient] = useState<any>(null);
   const [error, setError] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
+  const [cars, setCars] = useState<Car[]>([]);
+  const [totalItems, setTotalItems] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -25,26 +40,40 @@ const OrderPage = () => {
 
       try {
         const token = localStorage.getItem('token');
-        const [clientResponse, reservationsResponse] = await Promise.all([
+        const [clientResponse, favoriteCarsResponse] = await Promise.all([
           axios.get(`http://localhost:3001/users/clients/${userId}`, {
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json',
             },
           }),
-          axios.get(`http://localhost:3001/reservations/client/${userId}`, {
+          axios.get(`http://localhost:3001/favorite-cars/client/${userId}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }),
+        ]);
+
+        setClient(clientResponse.data);
+        const favoriteCars = favoriteCarsResponse.data;
+        setTotalItems(favoriteCars.length);
+
+        // Fetch car details for each favorite car
+        const carDetailsPromises = favoriteCars.map((favCar: any) =>
+          axios.get(`http://localhost:3001/cars/${favCar.idVoiture}`, {
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json',
             },
           })
-        ]);
-
-        setClient(clientResponse.data);
-        setReservations(reservationsResponse.data);
+        );
+        const carDetailsResponses = await Promise.all(carDetailsPromises);
+        const carDetails = carDetailsResponses.map(response => response.data);
+        setCars(carDetails);
       } catch (error) {
         console.error('Error fetching data:', error);
-        setError('Failed to fetch client or reservations data');
+        setError('Failed to fetch client or data');
       }
     };
 
@@ -53,7 +82,7 @@ const OrderPage = () => {
     setIsAuth(authStatus);
   }, [router]);
 
-  const handleItemClick = (page) => {
+  const handleItemClick = (page: string) => {
     setActivePage(page);
   };
 
@@ -66,47 +95,6 @@ const OrderPage = () => {
   if (!client) {
     return <div>Loading...</div>;
   }
-
-  const renderOrderStatus = (status) => {
-    const statusMap = {
-      confirmer: 'completed',
-      annuler: 'cancelled',
-      'en Attent': 'scheduled'
-    };
-
-    const statusClassMap = {
-      completed: 'bg-[#00B74A] text-white rounded-full text-[14px]',
-      cancelled: 'bg-[#F93154] text-white rounded-full text-[14px]',
-      scheduled: 'bg-[#FFA900] text-white rounded-full text-[14px]'
-    };
-
-    return (
-      <span className={`px-2 py-1 rounded ${statusClassMap[statusMap[status]]}`}>{statusMap[status]}</span>
-    );
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getFullYear()}`;
-  };
-
-  const renderOrders = (status) => {
-    return reservations.filter(reservation => reservation.status === status).map((reservation, index) => (
-      <div key={reservation._id} className="block lg:table-row mb-4 text-[15px] lg:mb-0">
-        <div className="block lg:table-cell p-2 font-bold">{index + 1}</div>
-        <div className="block lg:table-cell p-2 font-bold">{reservation.idVoiture ? `${reservation.idVoiture.marque} ${reservation.idVoiture.modele}` : 'Car details not available'}</div>
-        <div className="block lg:table-cell p-2">{reservation.lieuRamassage}</div>
-        <div className="block lg:table-cell p-2">{reservation.destination}</div>
-        <div className="block lg:table-cell p-2">{formatDate(reservation.dateDebut)}</div>
-        <div className="block lg:table-cell p-2">{formatDate(reservation.dateFin)}</div>
-        <div className="block lg:table-cell p-2">{reservation.tarifTotale} $</div>
-        <div className="block lg:table-cell p-2">{reservation.chauffeur ? 'Yes' : 'No'}</div>
-        <div className="block lg:table-cell p-2">{reservation.commentaire}</div>
-        <div className="block lg:table-cell p-2">{renderOrderStatus(reservation.status)}</div>
-      </div>
-    ));
-  };
-
   return (
     <div>
       <div className="h-[400px] bg-cover bg-center bg-[url('/images/road.jpg')]">
@@ -185,9 +173,7 @@ const OrderPage = () => {
                   <Link href="/profile">
                     <div
                       onClick={() => handleItemClick('profile')}
-                      className={`cursor-pointer py-2 px-6 rounded transition ${
-                        activePage === 'profile' ? 'bg-[#1ECB15] text-white hover:bg-[#17ab12]' : 'bg-white text-black'
-                      }`}
+                      className={`cursor-pointer py-2 px-6 rounded transition ${activePage === 'profile' ? 'bg-[#1ECB15] text-white hover:bg-[#17ab12]' : 'bg-white text-black'}`}
                     >
                       <FaUser className={`inline-block mr-2 ${activePage === 'profile' ? 'text-white' : 'text-[#1ECB15]'}`} />My Profile
                     </div>
@@ -197,9 +183,7 @@ const OrderPage = () => {
                   <Link href="/orders">
                     <div
                       onClick={() => handleItemClick('orders')}
-                      className={`cursor-pointer py-2 px-6 rounded transition ${
-                        activePage === 'orders' ? 'bg-[#1ECB15] text-white hover:bg-[#17ab12]' : 'bg-white text-black'
-                      }`}
+                      className={`cursor-pointer py-2 px-6 rounded transition ${activePage === 'orders' ? 'bg-[#1ECB15] text-white hover:bg-[#17ab12]' : 'bg-white text-black'}`}
                     >
                       <FaCalendar className={`inline-block mr-2 ${activePage === 'orders' ? 'text-white' : 'text-[#1ECB15]'}`} />My Orders
                     </div>
@@ -209,9 +193,7 @@ const OrderPage = () => {
                   <Link href="/favCar">
                     <div
                       onClick={() => handleItemClick('favorites')}
-                      className={`cursor-pointer py-2 px-6 rounded transition ${
-                        activePage === 'favorites' ? 'bg-[#1ECB15] text-white hover:bg-[#17ab12]' : 'bg-white text-black'
-                      }`}
+                      className={`cursor-pointer py-2 px-6 rounded transition ${activePage === 'favorites' ? 'bg-[#1ECB15] text-white hover:bg-[#17ab12]' : 'bg-white text-black'}`}
                     >
                       <FaCar className={`inline-block mr-2 ${activePage === 'favorites' ? 'text-white' : 'text-[#1ECB15]'}`} /> My Favorite Cars
                     </div>
@@ -226,11 +208,30 @@ const OrderPage = () => {
             </nav>
           </div>
           <div className="bg-white shadow-md rounded-md p-6 w-full md:w-3/4">
-            <h1 className="text-2xl font-bold mb-4">My Orders</h1>
-            <OrderSection title="Scheduled Orders" status="en Attent" renderOrders={renderOrders} />
-            <OrderSection title="Completed Orders" status="confirmer" renderOrders={renderOrders} />
-            <OrderSection title="Cancelled Orders" status="annuler" renderOrders={renderOrders} />
-            {error && <p className="text-red-500 mt-4">{error}</p>}
+            <h1 className="text-2xl font-bold mb-4">My Favorite Cars</h1>
+            {cars.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {cars.map((car) => (
+                  <div key={car._id} className="bg-white shadow-md rounded-md p-4">
+                    <img src={car.image} alt={car.modele} className="w-full h-48 object-cover rounded-md mb-4" />
+                    <h2 className="text-lg font-semibold">{car.marque} {car.modele}</h2>
+                    <p className="text-gray-700">{car.categorie}</p>
+                    <p className="text-gray-700">Kilometrage: {car.kilometrage} km</p>
+                    <p className="text-gray-700">Carburant: {car.typeCarburant}</p>
+                    <p className="text-gray-700">Transmission: {car.typeTransmission}</p>
+                    <p className="text-gray-700">Année: {car.anneeFabrication}</p>
+                    <p className="text-gray-700 font-bold">{car.prixParJ} $/jour</p>
+                    <Link href={`/detailsCar/${car._id}`}>
+                    <div className="text-[#1ECB15] text-sm flex items-center text-[15px] cursor-pointer">
+                      View Details <FaArrowUp className="ml-1 rotate-45" />
+                    </div>
+                  </Link>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-700">Vous n'avez pas de voitures favorites pour le moment.</p>
+            )}
           </div>
         </div>
       </div>
@@ -238,29 +239,4 @@ const OrderPage = () => {
   );
 };
 
-const OrderSection = ({ title, status, renderOrders }) => (
-  <div className="bg-gray-50 p-4 rounded-lg mb-6 text-center">
-    <h2 className="font-bold mt-4 text-[20px] p-4 text-center">{title}</h2>
-    <div className="table-responsive">
-      <div className="lg:table w-full mt-2 mb-4 divide-y divide-gray-300">
-        <div className="text-[#ACACAC] text-[15px] hidden lg:table-row">
-          <div className="lg:table-cell p-1 font-normal">#</div>
-          <div className="lg:table-cell p-1 font-normal">Car Name</div>
-          <div className="lg:table-cell p-1 font-normal">Pick Up Location</div>
-          <div className="lg:table-cell p-1 font-normal">Drop Off Location</div>
-          <div className="lg:table-cell p-1 font-normal">Pick Up Date</div>
-          <div className="lg:table-cell p-1 font-normal">Return Date</div>
-          <div className="lg:table-cell p-1 font-normal">Total Cost</div>
-          <div className="lg:table-cell p-1 font-normal">With Driver</div>
-          <div className="lg:table-cell p-1 font-normal">Comment</div>
-          <div className="lg:table-cell p-1 font-normal">Status</div>
-        </div>
-        <div className="lg:table-row-group">
-          {renderOrders(status)}
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-export default OrderPage;
+export default FavCarPage;

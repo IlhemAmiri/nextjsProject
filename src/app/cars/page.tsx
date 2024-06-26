@@ -23,8 +23,8 @@ const Page = () => {
   const [cars, setCars] = useState<Car[]>([]);
   const [isAuth, setIsAuth] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [favourites, setFavourites] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(() => {
-    // Récupérer la page actuelle depuis le localStorage ou définir à 1 par défaut
     return parseInt(localStorage.getItem('currentPage') || '1', 10);
   });
   const [itemsPerPage] = useState(12);
@@ -32,11 +32,82 @@ const Page = () => {
   const router = useRouter();
 
   useEffect(() => {
+    const fetchFavourites = async () => {
+      const clientId = localStorage.getItem('userId');
+      const token = localStorage.getItem('token');
+      if (!clientId || !token) {
+        console.error('Client ID or token is missing');
+        return;
+      }
+
+      try {
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        };
+
+        const response = await axios.get(`http://localhost:3001/favorite-cars/client/${clientId}`, config);
+        const favouriteCars = response.data.map((fav: any) => fav.idVoiture);
+        setFavourites(new Set(favouriteCars));
+      } catch (error) {
+        console.error('Error fetching favourites:', error);
+      }
+    };
+
+    fetchFavourites();
+  }, []);
+
+  const handleToggleFavourite = async (carId: string) => {
+    const clientId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+    if (!clientId || !token) {
+      console.error('Client ID or token is missing');
+      alert('Please log in to add to favourites');
+      return;
+    }
+
+    const isFavourite = favourites.has(carId);
+    try {
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      };
+
+      if (!isFavourite) {
+        await axios.post('http://localhost:3001/favorite-cars', { idClient: clientId, idVoiture: carId }, config);
+        setFavourites((prev) => {
+          const newFavourites = new Set(prev);
+          newFavourites.add(carId);
+          return newFavourites;
+        });
+        console.log(`Car ${carId} added to favourites`);
+      } else {
+        await axios.delete('http://localhost:3001/favorite-cars', {
+          data: { idClient: clientId, idVoiture: carId },
+          ...config,
+        });
+        setFavourites((prev) => {
+          const newFavourites = new Set(prev);
+          newFavourites.delete(carId);
+          return newFavourites;
+        });
+        console.log(`Car ${carId} removed from favourites`);
+      }
+    } catch (error: any) {
+      console.error('Error toggling favourite:', error);
+      alert(`An error occurred while toggling favourite status: ${error.response?.data?.message || error.message}`);
+    }
+  };
+
+  useEffect(() => {
     const fetchCars = async () => {
       try {
         const response = await axios.get(`http://localhost:3001/cars?page=${currentPage}&limit=${itemsPerPage}`);
-        setCars(response.data.data); // Adjusted to match the response structure
-        setTotalItems(response.data.total); // Adjusted to match the response structure
+        setCars(response.data.data);
+        setTotalItems(response.data.total);
       } catch (error) {
         console.error('There was an error fetching the car data!', error);
       }
@@ -44,7 +115,6 @@ const Page = () => {
 
     fetchCars();
 
-    // Check authentication status from local storage
     const authStatus = localStorage.getItem('isAuth') === 'true';
     setIsAuth(authStatus);
   }, [currentPage, itemsPerPage]);
@@ -61,7 +131,7 @@ const Page = () => {
     if (currentPage < totalPages) {
       const nextPage = currentPage + 1;
       setCurrentPage(nextPage);
-      localStorage.setItem('currentPage', nextPage.toString()); // Stocker la page actuelle
+      localStorage.setItem('currentPage', nextPage.toString());
     }
   };
 
@@ -69,13 +139,13 @@ const Page = () => {
     if (currentPage > 1) {
       const prevPage = currentPage - 1;
       setCurrentPage(prevPage);
-      localStorage.setItem('currentPage', prevPage.toString()); // Stocker la page actuelle
+      localStorage.setItem('currentPage', prevPage.toString());
     }
   };
 
   const handlePageClick = (page: number) => {
     setCurrentPage(page);
-    localStorage.setItem('currentPage', page.toString()); // Stocker la page actuelle
+    localStorage.setItem('currentPage', page.toString());
   };
   return (
     <div>
@@ -200,8 +270,8 @@ const Page = () => {
                   Great Price
                 </div>
                 <div className="absolute top-0 right-0 p-2">
-                  <button className="mt-2">
-                    <img src="/images/save.png" alt="" />
+                <button onClick={() => handleToggleFavourite(car._id)}>
+                    <img src={favourites.has(car._id) ? "/images/save2.png" : "/images/save.png"} alt="Favourite" />
                   </button>
                 </div>
               </div>

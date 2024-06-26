@@ -183,7 +183,7 @@ const ProfilePage = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/profile">
+                  <Link href="/favCar">
                     <div
                       onClick={() => handleItemClick('favorites')}
                       className={`cursor-pointer py-2 px-6 rounded transition ${activePage === 'favorites' ? 'bg-[#1ECB15] text-white hover:bg-[#17ab12]' : 'bg-white text-black'
