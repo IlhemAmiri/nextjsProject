@@ -1,45 +1,82 @@
 import React, { useState } from 'react';
 
-const StarRating1 = ({ rating, setRating }) => {
-  const [hoverRating, setHoverRating] = useState(0);
-
-  const handleMouseEnter = (index) => setHoverRating(index);
-  const handleMouseLeave = () => setHoverRating(0);
-  const handleClick = (index) => setRating(index);
-
-  return (
-    <div className="flex space-x-1">
-      {[1, 2, 3, 4, 5].map((index) => (
-        <div key={index} className="relative cursor-pointer" style={{ position: 'relative', width: '32px', height: '32px' }}>
-          {/* Full star */}
-          <svg
-            className={`absolute w-8 h-8 ${hoverRating >= index ? 'text-yellow-500' : rating >= index ? 'text-yellow-500' : 'text-gray-300'}`}
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            onMouseEnter={() => handleMouseEnter(index)}
-            onMouseLeave={handleMouseLeave}
-            onClick={() => handleClick(index)}
-          >
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.669 5.134a1 1 0 00.95.69h5.412c.969 0 1.371 1.24.588 1.81l-4.385 3.18a1 1 0 00-.364 1.118l1.669 5.134c.3.921-.755 1.688-1.539 1.118l-4.386-3.18a1 1 0 00-1.176 0l-4.386 3.18c-.783.57-1.838-.197-1.539-1.118l1.669-5.134a1 1 0 00-.364-1.118l-4.385-3.18c-.783-.57-.381-1.81.588-1.81h5.412a1 1 0 00.95-.69l1.669-5.134z" />
+const StarRating = ({ rating }) => {
+    const fullStars = Math.floor(rating);
+    const quarterStar = (rating % 1) >= 0.25 && (rating % 1) < 0.5;
+    const halfStar = (rating % 1) >= 0.5 && (rating % 1) < 0.75;
+    const threeQuarterStar = (rating % 1) >= 0.75;
+    const emptyStars = 5 - fullStars - (quarterStar || halfStar || threeQuarterStar ? 1 : 0);
+  
+    return (
+      <div className="flex items-center">
+        {Array(fullStars)
+          .fill(0)
+          .map((_, index) => (
+            <svg
+              key={index}
+              className="w-6 h-6 text-yellow-500"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.357 4.167a1 1 0 00.95.69h4.389c.969 0 1.372 1.24.588 1.81l-3.557 2.581a1 1 0 00-.364 1.118l1.358 4.167c.3.921-.755 1.688-1.54 1.118l-3.557-2.581a1 1 0 00-1.175 0l-3.557 2.581c-.784.57-1.838-.197-1.54-1.118l1.358-4.167a1 1 0 00-.364-1.118L2.064 9.594c-.784-.57-.381-1.81.588-1.81h4.389a1 1 0 00.95-.69l1.357-4.167z" />
+            </svg>
+          ))}
+        {quarterStar && (
+          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <defs>
+              <linearGradient id="quarterGrad">
+                <stop offset="25%" stopColor="currentColor" className="text-yellow-500" />
+                <stop offset="25%" stopColor="currentColor" className="text-gray-300" />
+              </linearGradient>
+            </defs>
+            <path
+              fill="url(#quarterGrad)"
+              d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.357 4.167a1 1 0 00.95.69h4.389c.969 0 1.372 1.24.588 1.81l-3.557 2.581a1 1 0 00-.364 1.118l1.358 4.167c.3.921-.755 1.688-1.54 1.118l-3.557-2.581a1 1 0 00-1.175 0l-3.557 2.581c-.784.57-1.838-.197-1.54-1.118l1.358-4.167a1 1 0 00-.364-1.118L2.064 9.594c-.784-.57-.381-1.81.588-1.81h4.389a1 1 0 00.95-.69l1.357-4.167z"
+            />
           </svg>
-          {/* Half star */}
-          <svg
-            className={`absolute w-8 h-8 ${hoverRating >= index - 0.5 ? 'text-yellow-500' : rating >= index - 0.5 ? 'text-yellow-500' : 'text-gray-300'}`}
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            style={{ clipPath: 'inset(0 50% 0 0)', left: 0, position: 'absolute' }}
-            onMouseEnter={() => handleMouseEnter(index - 0.5)}
-            onMouseLeave={handleMouseLeave}
-            onClick={() => handleClick(index - 0.5)}
-          >
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.669 5.134a1 1 0 00.95.69h5.412c.969 0 1.371 1.24.588 1.81l-4.385 3.18a1 1 0 00-.364 1.118l1.669 5.134c.3.921-.755 1.688-1.539 1.118l-4.386-3.18a1 1 0 00-1.176 0l-4.386 3.18c-.783.57-1.838-.197-1.539-1.118l1.669-5.134a1 1 0 00-.364-1.118l-4.385-3.18c-.783-.57-.381-1.81.588-1.81h5.412a1 1 0 00.95-.69l1.669-5.134z" />
+        )}
+        {halfStar && (
+          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <defs>
+              <linearGradient id="halfGrad">
+                <stop offset="50%" stopColor="currentColor" className="text-yellow-500" />
+                <stop offset="50%" stopColor="currentColor" className="text-gray-300" />
+              </linearGradient>
+            </defs>
+            <path
+              fill="url(#halfGrad)"
+              d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.357 4.167a1 1 0 00.95.69h4.389c.969 0 1.372 1.24.588 1.81l-3.557 2.581a1 1 0 00-.364 1.118l1.358 4.167c.3.921-.755 1.688-1.54 1.118l-3.557-2.581a1 1 0 00-1.175 0l-3.557 2.581c-.784.57-1.838-.197-1.54-1.118l1.358-4.167a1 1 0 00-.364-1.118L2.064 9.594c-.784-.57-.381-1.81.588-1.81h4.389a1 1 0 00.95-.69l1.357-4.167z"
+            />
           </svg>
-        </div>
-      ))}
-    </div>
-  );
-};
+        )}
+        {threeQuarterStar && (
+          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <defs>
+              <linearGradient id="threeQuarterGrad">
+                <stop offset="75%" stopColor="currentColor" className="text-yellow-500" />
+                <stop offset="75%" stopColor="currentColor" className="text-gray-300" />
+              </linearGradient>
+            </defs>
+            <path
+              fill="url(#threeQuarterGrad)"
+              d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.357 4.167a1 1 0 00.95.69h4.389c.969 0 1.372 1.24.588 1.81l-3.557 2.581a1 1 0 00-.364 1.118l1.358 4.167c.3.921-.755 1.688-1.54 1.118l-3.557-2.581a1 1 0 00-1.175 0l-3.557 2.581c-.784.57-1.838-.197-1.54-1.118l1.358-4.167a1 1 0 00-.364-1.118L2.064 9.594c-.784-.57-.381-1.81.588-1.81h4.389a1 1 0 00.95-.69l1.357-4.167z"
+            />
+          </svg>
+        )}
+        {Array(emptyStars)
+          .fill(0)
+          .map((_, index) => (
+            <svg
+              key={index}
+              className="w-6 h-6 text-gray-300"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.357 4.167a1 1 0 00.95.69h4.389c.969 0 1.372 1.24.588 1.81l-3.557 2.581a1 1 0 00-.364 1.118l1.358 4.167c.3.921-.755 1.688-1.54 1.118l-3.557-2.581a1 1 0 00-1.175 0l-3.557 2.581c-.784.57-1.838-.197-1.54-1.118l1.358-4.167a1 1 0 00-.364-1.118L2.064 9.594c-.784-.57-.381-1.81.588-1.81h4.389a1 1 0 00.95-.69l1.357-4.167z" />
+            </svg>
+          ))}
+      </div>
+    );
+  };
 
-export default StarRating1;
+export default StarRating;
