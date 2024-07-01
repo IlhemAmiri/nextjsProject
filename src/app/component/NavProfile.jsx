@@ -17,7 +17,7 @@ const NavProfile = ({ isAuth, handleLogout, menuOpen, setMenuOpen }) => {
                         <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Booking</a>
                         <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">My Account</a>
                         <a href="/blogs" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Blog</a>
-                        <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">FAQ</a>
+                        <a href="/faq" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">FAQs</a>
                     </nav>
                 </div>
                 <div className="md:hidden flex items-center ml-auto">
@@ -49,7 +49,7 @@ const NavProfile = ({ isAuth, handleLogout, menuOpen, setMenuOpen }) => {
                     <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Booking</a>
                     <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">My Account</a>
                     <a href="/blogs" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Blog</a>
-                    <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">FAQ</a>
+                    <a href="/faq" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">FAQs</a>
                     {isAuth ? (
                         <button
                             onClick={handleLogout}

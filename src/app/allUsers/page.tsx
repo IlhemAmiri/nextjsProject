@@ -215,7 +215,7 @@ const AllUsersPage = () => {
                         <tbody>
                             {activeClients.map(client => (
                                 <tr key={client.email} className="border-b">
-                                    <td className="py-2 px-4">{client.email}</td>
+                                    <td className="py-2 px-4"><Link href={`/user/${client._id}`}>{client.email}</Link></td>
                                     <td className="py-2 px-4">{`${client.nom} ${client.prenom}`}</td>
                                     <td className="py-2 px-4">{client.CIN}</td>
                                     <td className="py-2 px-4">{client.passport}</td>
