@@ -10,6 +10,7 @@ const AddBlogPage = () => {
     const [category, setCategory] = useState('');
     const [summary, setSummary] = useState('');
     const [image, setImage] = useState(null);
+    const [content, setContent] = useState([{ title: '', text: '' }]);
     const [error, setError] = useState('');
     const [isMounted, setIsMounted] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
@@ -43,6 +44,8 @@ const AddBlogPage = () => {
         formData.append('category', category);
         formData.append('summary', summary);
         formData.append('image', image);
+        formData.append('content', JSON.stringify(content));
+
 
         try {
             const response = await fetch('http://localhost:3001/blogs', {
@@ -62,6 +65,16 @@ const AddBlogPage = () => {
             setError('Failed to add blog');
         }
     };
+    const handleContentChange = (index, field, value) => {
+        const newContent = [...content];
+        newContent[index][field] = value;
+        setContent(newContent);
+    };
+
+    const addContentSection = () => {
+        setContent([...content, { title: '', text: '' }]);
+    };
+
 
     if (!isMounted || !isAdmin) {
         return null;
@@ -128,6 +141,33 @@ const AddBlogPage = () => {
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                                 required
                             />
+                        </div>
+                        {content.map((section, index) => (
+                            <div key={index} className="col-span-2">
+                                <label className="block text-gray-700">Section Title</label>
+                                <input
+                                    type="text"
+                                    value={section.title}
+                                    onChange={(e) => handleContentChange(index, 'title', e.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                />
+                                <label className="block text-gray-700">Section Text</label>
+                                <textarea
+                                    value={section.text}
+                                    onChange={(e) => handleContentChange(index, 'text', e.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    required
+                                ></textarea>
+                            </div>
+                        ))}
+                        <div className="col-span-2">
+                            <button
+                                type="button"
+                                onClick={addContentSection}
+                                className="w-full bg-[#1ECB15] text-white py-2 px-4 rounded-md hover:bg-[#16A314] transition-colors"
+                            >
+                                Add Section
+                            </button>
                         </div>
                         <div className="col-span-2">
                             <button
