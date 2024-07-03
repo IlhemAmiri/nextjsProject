@@ -78,8 +78,8 @@ const Note = ({ note }) => {
     return (
         <div className="border rounded-lg p-4 mb-4">
             <div className="flex items-center mb-2">
-                <img src={client.image} alt="Profile" className="rounded-full w-12 h-12 mr-4" />
-                <span className="font-semibold text-[25px]">{client.nom} {client.prenom}</span>
+                <img src={note.idClient.image} alt="Profile" className="rounded-full w-12 h-12 mr-4" />
+                <span className="font-semibold text-[25px]">{note.idClient.nom} {note.idClient.prenom}</span>
             </div>
             <StarRating rating={note.note} />
             {note.commentaire && (
