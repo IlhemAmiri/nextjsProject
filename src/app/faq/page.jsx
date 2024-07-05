@@ -40,7 +40,7 @@ export default function FAQPage() {
         router.push('/signin');
     };
     return (
-        <div>
+        <div className='bg-white'>
             <NavProfile isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
             <div className="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
                 <h1 className="text-5xl font-extrabold text-center mb-12">Frequently Asked Questions</h1>
