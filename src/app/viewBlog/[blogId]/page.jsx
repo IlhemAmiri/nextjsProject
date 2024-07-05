@@ -56,7 +56,7 @@ const BlogDetails = () => {
     };
 
     return (
-        <div>
+        <div className='bg-white'>
             <NavProfile isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
 
             <div className="container mx-auto p-4 text-center">
