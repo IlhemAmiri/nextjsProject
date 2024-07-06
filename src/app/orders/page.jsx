@@ -6,6 +6,7 @@ import DashboardFavCar from '../component/DashboardFavCar';
 import axios from 'axios';
 import NavProfile from '../component/NavProfile';
 import OrderSection from '../component/OrderSection';
+import { FaCreditCard } from 'react-icons/fa';
 
 const OrderPage = () => {
   const [activePage, setActivePage] = useState('orders');
@@ -92,6 +93,29 @@ const OrderPage = () => {
     return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getFullYear()}`;
   };
 
+  const handlePayClick = (reservationId) => {
+    localStorage.setItem('reservationId', reservationId);
+    router.push('/payment');
+  };
+  const fetchPaymentStatus = async (reservationId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:3001/payments/${reservationId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      return response.data.status === 'payee';
+    } catch (error) {
+      console.error('Error fetching payment status:', error);
+      return false;
+    }
+  };
+  
+
+
   const renderOrders = (status) => {
     const now = new Date();
     return reservations.filter(reservation => reservation.status === status && new Date(reservation.dateDebut) >= now).map((reservation, index) => (
@@ -106,6 +130,20 @@ const OrderPage = () => {
         <div className="block lg:table-cell p-2">{reservation.chauffeur ? 'Yes' : 'No'}</div>
         <div className="block lg:table-cell p-2">{reservation.commentaire}</div>
         <div className="block lg:table-cell p-2">{renderOrderStatus(reservation.status)}</div>
+        {status === 'confirmer' && (
+          <div className="block lg:table-cell p-2">
+             {reservation.statusPaiement === 'payee' ? (
+            <span>Already paid</span>
+          ) : (
+            <button
+              onClick={() => handlePayClick(reservation._id)}
+              className="bg-blue-500 text-white py-1 px-3 rounded-full hover:bg-blue-600 transition duration-200"
+            >
+              <FaCreditCard size={20} />
+            </button>
+          )}
+          </div>
+        )}
       </div>
     ));
   };
