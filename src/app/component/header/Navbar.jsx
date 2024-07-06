@@ -2,20 +2,20 @@ import React from 'react';
 import { FaFacebook, FaTwitter, FaYoutube, FaPinterest, FaInstagram, FaPhone, FaEnvelope, FaClock } from 'react-icons/fa';
 
 const Navbar = () => {
-  const getCurrentDate = () => {
-    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  // const getCurrentDate = () => {
+  //   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  //   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-    const now = new Date();
-    const dayName = days[now.getDay()];
-    const monthName = months[now.getMonth()];
-    const day = now.getDate();
-    const year = now.getFullYear();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
+  //   const now = new Date();
+  //   const dayName = days[now.getDay()];
+  //   const monthName = months[now.getMonth()];
+  //   const day = now.getDate();
+  //   const year = now.getFullYear();
+  //   const hours = now.getHours().toString().padStart(2, '0');
+  //   const minutes = now.getMinutes().toString().padStart(2, '0');
 
-    return `${dayName}, ${monthName} ${day}, ${year} ${hours}:${minutes}`;
-  };
+  //   return `${dayName}, ${monthName} ${day}, ${year} ${hours}:${minutes}`;
+  // };
 
   return (
     <div>
@@ -31,7 +31,7 @@ const Navbar = () => {
           </div>
           <div className="flex items-center">
             <FaClock className="text-[#1ECB15] mr-1" />
-            <span className="font-inter text-[14px] leading-[27.2px]">{getCurrentDate()}</span>
+            <span className="font-inter text-[14px] leading-[27.2px]">Mon - Fri 08.00 - 18.00</span>
           </div>
         </div>
         <div className="flex items-center space-x-4">

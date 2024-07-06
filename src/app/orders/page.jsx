@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import DashboardFavCar from '../component/DashboardFavCar'
+import DashboardFavCar from '../component/DashboardFavCar';
 import axios from 'axios';
-import NavProfile from '../component/NavProfile'
-import OrderSection from '../component/OrderSection'
+import NavProfile from '../component/NavProfile';
+import OrderSection from '../component/OrderSection';
 
 const OrderPage = () => {
   const [activePage, setActivePage] = useState('orders');
@@ -14,6 +14,7 @@ const OrderPage = () => {
   const [error, setError] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
+  const [showPastReservations, setShowPastReservations] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -92,7 +93,8 @@ const OrderPage = () => {
   };
 
   const renderOrders = (status) => {
-    return reservations.filter(reservation => reservation.status === status).map((reservation, index) => (
+    const now = new Date();
+    return reservations.filter(reservation => reservation.status === status && new Date(reservation.dateDebut) >= now).map((reservation, index) => (
       <div key={reservation._id} className="block lg:table-row mb-4 text-[15px] lg:mb-0">
         <div className="block lg:table-cell p-2 font-bold">{index + 1}</div>
         <div className="block lg:table-cell p-2 font-bold">{reservation.idVoiture ? `${reservation.idVoiture.marque} ${reservation.idVoiture.modele}` : 'Car details not available'}</div>
@@ -107,6 +109,25 @@ const OrderPage = () => {
       </div>
     ));
   };
+
+  const renderPastOrders = () => {
+    const now = new Date();
+    return reservations.filter(reservation => new Date(reservation.dateDebut) < now).map((reservation, index) => (
+      <div key={reservation._id} className="block lg:table-row mb-4 text-[15px] lg:mb-0">
+        <div className="block lg:table-cell p-2 font-bold">{index + 1}</div>
+        <div className="block lg:table-cell p-2 font-bold">{reservation.idVoiture ? `${reservation.idVoiture.marque} ${reservation.idVoiture.modele}` : 'Car details not available'}</div>
+        <div className="block lg:table-cell p-2">{reservation.lieuRamassage}</div>
+        <div className="block lg:table-cell p-2">{reservation.destination}</div>
+        <div className="block lg:table-cell p-2">{formatDate(reservation.dateDebut)}</div>
+        <div className="block lg:table-cell p-2">{formatDate(reservation.dateFin)}</div>
+        <div className="block lg:table-cell p-2">{reservation.tarifTotale} $</div>
+        <div className="block lg:table-cell p-2">{reservation.chauffeur ? 'Yes' : 'No'}</div>
+        <div className="block lg:table-cell p-2">{reservation.commentaire}</div>
+        <div className="block lg:table-cell p-2">{renderOrderStatus(reservation.status)}</div>
+      </div>
+    ));
+  };
+
   const handleDelete = async (userId) => {
     try {
       const token = localStorage.getItem('token');
@@ -147,6 +168,16 @@ const OrderPage = () => {
             <OrderSection title="Scheduled Orders" status="en Attent" renderOrders={renderOrders} />
             <OrderSection title="Completed Orders" status="confirmer" renderOrders={renderOrders} />
             <OrderSection title="Cancelled Orders" status="annuler" renderOrders={renderOrders} />
+            <h2 className="text-xl font-semibold mb-4 mt-8">Past Reservations</h2>
+            <div>
+              <button
+                onClick={() => setShowPastReservations(!showPastReservations)}
+                className="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 transition duration-200"
+              >
+                {showPastReservations ? 'Hide' : 'Show'} Past Reservations
+              </button>
+              {showPastReservations && <OrderSection title="Past Reservations" status="past" renderOrders={renderPastOrders} />}
+            </div>
             {error && <p className="text-red-500 mt-4">{error}</p>}
           </div>
         </div>
@@ -154,6 +185,5 @@ const OrderPage = () => {
     </div>
   );
 };
-
 
 export default OrderPage;

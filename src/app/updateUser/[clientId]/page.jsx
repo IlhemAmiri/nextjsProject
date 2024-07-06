@@ -13,6 +13,11 @@ const UpdateUserPage = ({ params }) => {
     numTel: '',
     adresse: '',
     image: null,
+    CIN: '',
+    passport: '',
+    dateNaissance: '',
+    numPermisConduire: '',
+    dateExpirationPermis: '',
   });
   const [error, setError] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -44,7 +49,11 @@ const UpdateUserPage = ({ params }) => {
         }
 
         const data = await response.json();
-        setClient(data);
+        setClient({
+          ...data,
+          dateNaissance: data.dateNaissance ? new Date(data.dateNaissance).toISOString().split('T')[0] : '',
+          dateExpirationPermis: data.dateExpirationPermis ? new Date(data.dateExpirationPermis).toISOString().split('T')[0] : ''
+        });
       } catch (error) {
         setError(error.message);
       }
@@ -76,6 +85,11 @@ const UpdateUserPage = ({ params }) => {
     formData.append('email', client.email);
     formData.append('numTel', client.numTel);
     formData.append('adresse', client.adresse);
+    formData.append('CIN', client.CIN);
+    formData.append('passport', client.passport);
+    formData.append('dateNaissance', client.dateNaissance);
+    formData.append('numPermisConduire', client.numPermisConduire);
+    formData.append('dateExpirationPermis', client.dateExpirationPermis);
     if (client.image) {
       formData.append('image', client.image);
     }
@@ -99,7 +113,7 @@ const UpdateUserPage = ({ params }) => {
       
       const role = localStorage.getItem('role');
       if (role === 'admin') {
-        router.push('/allUsers');
+        router.push('/');
       } else {
         router.push('/profile');
       }
@@ -283,6 +297,56 @@ const UpdateUserPage = ({ params }) => {
                     className="w-full border rounded px-3 py-2"
                     value={client.adresse}
                     onChange={(e) => setClient({ ...client, adresse: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="CIN" className="block font-medium mb-2">CIN</label>
+                  <input
+                    type="text"
+                    id="CIN"
+                    className="w-full border rounded px-3 py-2"
+                    value={client.CIN}
+                    onChange={(e) => setClient({ ...client, CIN: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="passport" className="block font-medium mb-2">Passport</label>
+                  <input
+                    type="text"
+                    id="passport"
+                    className="w-full border rounded px-3 py-2"
+                    value={client.passport}
+                    onChange={(e) => setClient({ ...client, passport: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="dateNaissance" className="block font-medium mb-2">Date of Birth</label>
+                  <input
+                    type="date"
+                    id="dateNaissance"
+                    className="w-full border rounded px-3 py-2"
+                    value={client.dateNaissance}
+                    onChange={(e) => setClient({ ...client, dateNaissance: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="numPermisConduire" className="block font-medium mb-2">Driver's License Number</label>
+                  <input
+                    type="text"
+                    id="numPermisConduire"
+                    className="w-full border rounded px-3 py-2"
+                    value={client.numPermisConduire}
+                    onChange={(e) => setClient({ ...client, numPermisConduire: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="dateExpirationPermis" className="block font-medium mb-2">Driver's License Expiry Date</label>
+                  <input
+                    type="date"
+                    id="dateExpirationPermis"
+                    className="w-full border rounded px-3 py-2"
+                    value={client.dateExpirationPermis}
+                    onChange={(e) => setClient({ ...client, dateExpirationPermis: e.target.value })}
                   />
                 </div>
                 <div>
