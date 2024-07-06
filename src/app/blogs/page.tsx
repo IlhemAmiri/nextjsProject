@@ -27,7 +27,6 @@ const PageBlogs = () => {
     const router = useRouter();
 
     useEffect(() => {
-        // Fetch blogs from API
         const fetchBlogs = async (page: number) => {
             try {
                 const res = await axios.get(`http://localhost:3001/blogs?page=${page}&limit=${blogsPerPage}`);
@@ -60,7 +59,6 @@ const PageBlogs = () => {
     return (
         <div>
             <NavBlog isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
-
             <AllBlogs
                 blogs={blogs}
                 currentPage={currentPage}
@@ -68,7 +66,6 @@ const PageBlogs = () => {
                 totalPages={totalPages}
                 formatDate={formatDate}
             />
-
         </div>
     );
 };
