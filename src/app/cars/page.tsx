@@ -17,8 +17,11 @@ interface Car {
   typeTransmission: string;
   anneeFabrication: number;
   prixParJ: number;
+  vehicleType: string;
 }
-
+interface SearchParams {
+  [key: string]: string;
+}
 const Page = () => {
   const [cars, setCars] = useState<Car[]>([]);
   const [isAuth, setIsAuth] = useState(false);
@@ -29,6 +32,15 @@ const Page = () => {
   });
   const [itemsPerPage] = useState(12);
   const [totalItems, setTotalItems] = useState(0);
+  const [searchParams, setSearchParams] = useState<Record<string, string>>({
+    vehicleType: '',
+    bodyType: '',
+    seats: '',
+    minPrice: '0',
+    maxPrice: '10000',
+  });
+  const [priceRange, setPriceRange] = useState<number>(10000);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -102,22 +114,31 @@ const Page = () => {
     }
   };
 
+  const fetchCars = async (params = {}) => {
+    try {
+      const response = await axios.get(`http://localhost:3001/cars/recherche/check`, {
+        params: {
+          page: currentPage,
+          limit: itemsPerPage,
+          ...params,
+        },
+      });
+      setCars(response.data.data);
+      setTotalItems(response.data.total);
+    } catch (error) {
+      console.error('There was an error fetching the car data!', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchCars = async () => {
-      try {
-        const response = await axios.get(`http://localhost:3001/cars?page=${currentPage}&limit=${itemsPerPage}`);
-        setCars(response.data.data);
-        setTotalItems(response.data.total);
-      } catch (error) {
-        console.error('There was an error fetching the car data!', error);
-      }
-    };
-
-    fetchCars();
-
+    fetchCars(searchParams);
     const authStatus = localStorage.getItem('isAuth') === 'true';
     setIsAuth(authStatus);
   }, [currentPage, itemsPerPage]);
+
+  useEffect(() => {
+    fetchCars(searchParams);
+  }, [searchParams]);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -147,6 +168,95 @@ const Page = () => {
     setCurrentPage(page);
     localStorage.setItem('currentPage', page.toString());
   };
+
+
+  const handleSearchChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type } = e.target;
+
+    if (type === 'checkbox') {
+      const { checked } = e.target as HTMLInputElement;
+      setSearchParams((prevParams) => {
+        if (checked) {
+          return {
+            ...prevParams,
+            [name]: value,
+          };
+        } else {
+          const newParams = { ...prevParams };
+          delete newParams[name];
+          return newParams;
+        }
+      });
+    } else {
+      setSearchParams((prevParams) => ({
+        ...prevParams,
+        [name]: value,
+      }));
+    }
+  };
+
+
+  const handlePriceRangeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10);
+    setPriceRange(value);
+    setSearchParams((prevParams) => ({
+      ...prevParams,
+      minPrice: '0',
+      maxPrice: value.toString(),
+    }));
+  };
+  const handleVehicleTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+
+    if (checked) {
+      setSearchParams((prevParams) => ({
+        ...prevParams,
+        vehicleType: value,
+      }));
+    } else {
+      setSearchParams((prevParams) => {
+        const newParams = { ...prevParams };
+        delete newParams.vehicleType;
+        return newParams;
+      });
+    }
+  };
+  const handleBodyTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+
+    if (checked) {
+      setSearchParams((prevParams) => ({
+        ...prevParams,
+        bodyType: value,
+      }));
+    } else {
+      setSearchParams((prevParams) => {
+        const newParams = { ...prevParams };
+        delete newParams.bodyType;
+        return newParams;
+      });
+    }
+  };
+  const handleSeatsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+
+    if (checked) {
+      setSearchParams((prevParams) => ({
+        ...prevParams,
+        seats: value,
+      }));
+    } else {
+      setSearchParams((prevParams) => {
+        const newParams = { ...prevParams };
+        delete newParams.seats;
+        return newParams;
+      });
+    }
+  };
+
+
   return (
     <div>
       <div className="h-[400px] bg-cover bg-center bg-[url('/images/11.jpg')]">
@@ -213,131 +323,149 @@ const Page = () => {
       </div>
 
       <div className="bg-gray-100">
-      <div className="text-center pt-12">
-        <h2 className="font-outfit text-[42px] font-semibold leading-[50px] tracking-[-1.8px]">Explore All Vehicles</h2>
-      </div>
-      <div className="pt-16 px-4 md:px-[10%] flex flex-col lg:flex-row">
-        <div className="w-full lg:w-[336px] h-auto mb-8 lg:mb-0 lg:mr-12">
-          <div className="bg-white p-6 rounded shadow-[3px_3px_9px_0px_#A4A4BA33] mb-6">
-            <h3 className="font-semibold">Vehicle Type</h3>
-            <div className="flex flex-col gap-2 mt-2">
-              <label><input type="checkbox" /> Car</label>
-              <label><input type="checkbox" /> Van</label>
-              <label><input type="checkbox" /> Minibus</label>
-              <label><input type="checkbox" /> Prestige</label>
-            </div>
-          </div>
-          <div className="bg-white p-6 border-t rounded shadow-[3px_3px_9px_0px_#A4A4BA33] mb-6">
-            <h3 className="font-semibold">Car Body Type</h3>
-            <div className="flex flex-col gap-2 mt-2">
-              <label><input type="checkbox" /> Convertible</label>
-              <label><input type="checkbox" /> Coupe</label>
-              <label><input type="checkbox" /> Exotic Cars</label>
-              <label><input type="checkbox" /> Hatchback</label>
-              <label><input type="checkbox" /> Minivan</label>
-              <label><input type="checkbox" /> Truck</label>
-              <label><input type="checkbox" /> Sedan</label>
-              <label><input type="checkbox" /> Sports Car</label>
-              <label><input type="checkbox" /> Station Wagon</label>
-              <label><input type="checkbox" /> SUV</label>
-            </div>
-          </div>
-          <div className="bg-white p-6 border-t rounded shadow-[3px_3px_9px_0px_#A4A4BA33] mb-6">
-            <h3 className="font-semibold">Car Seats</h3>
-            <div className="flex flex-col gap-2 mt-2">
-              <label><input type="checkbox" /> 2 seats</label>
-              <label><input type="checkbox" /> 4 seats</label>
-              <label><input type="checkbox" /> 6 seats</label>
-              <label><input type="checkbox" /> 6+ seats</label>
-            </div>
-          </div>
-          <div className="bg-white p-6 border-t rounded shadow-[3px_3px_9px_0px_#A4A4BA33]">
-            <h3 className="font-semibold">Price ($)</h3>
-            <div className="flex items-center gap-2 mt-2">
-              <input type="range" min="0" max="195" className="w-full" />
-              <span>$0 - $195</span>
-            </div>
-          </div>
+        <div className="text-center pt-12">
+          <h2 className="font-outfit text-[42px] font-semibold leading-[50px] tracking-[-1.8px]">Explore All Vehicles</h2>
         </div>
-        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {Array.isArray(cars) && cars.map((car, index) => (
-            <div key={index} className="bg-white rounded-lg shadow-md mb-20 transition-transform transform hover:scale-105 min-h-[300px] max-h-[450px]">
-              <div className="relative">
-                <img src={car.image} alt={car.modele} className="rounded-t-lg w-full h-[218.33px] object-cover" />
-                <div className="absolute top-[20.05px] left-[20px] bg-[#1ECB15] text-white rounded-[30px] px-[15px] py-[2.94px] text-sm">
-                  Great Price
-                </div>
-                <div className="absolute top-0 right-0 p-2">
-                <button onClick={() => handleToggleFavourite(car._id)}>
-                    <img src={favourites.has(car._id) ? "/images/save2.png" : "/images/save.png"} alt="Favourite" />
-                  </button>
-                </div>
+        <div className="pt-16 px-4 md:px-[10%] flex flex-col lg:flex-row">
+          <div className="w-full lg:w-[336px] h-auto mb-8 lg:mb-0 lg:mr-12">
+            <div className="bg-white p-6 rounded shadow-[3px_3px_9px_0px_#A4A4BA33] mb-6">
+              <h3 className="font-semibold">Vehicle Type</h3>
+              <div className="flex flex-col gap-2 mt-2">
+                <label><input type="checkbox" name="vehicleType" value="Car" checked={searchParams.vehicleType === 'Car'} onChange={handleVehicleTypeChange} /> Car</label>
+                <label><input type="checkbox" name="vehicleType" value="Van" checked={searchParams.vehicleType === 'Van'} onChange={handleVehicleTypeChange} /> Van</label>
+                <label><input type="checkbox" name="vehicleType" value="Minibus" checked={searchParams.vehicleType === 'Minibus'} onChange={handleVehicleTypeChange} /> Minibus</label>
+                <label><input type="checkbox" name="vehicleType" value="Prestige" checked={searchParams.vehicleType === 'Prestige'} onChange={handleVehicleTypeChange} /> Prestige</label>
+
               </div>
-              <div className="p-4">
-                <h3 className="font-dm-sans text-[18px] font-bold leading-[21.6px]">{car.marque} {car.modele}</h3>
-                <p className="font-dm-sans text-[14px] leading-[14px] mt-2">{car.categorie}</p>
-                <div className="grid grid-cols-2 gap-4 mt-2">
-                  <div className="flex items-center">
-                    <img src="/images/Miles.png" alt="" className="mr-2" />
-                    <span className="font-dm-sans text-[14px] leading-[14px]">{car.kilometrage} Miles</span>
+            </div>
+            <div className="bg-white p-6 border-t rounded shadow-[3px_3px_9px_0px_#A4A4BA33] mb-6">
+              <h3 className="font-semibold">Car Body Type</h3>
+              <div className="flex flex-col gap-2 mt-2">
+                <label><input type="checkbox" name="bodyType" value="Compact" checked={searchParams.bodyType === 'Compact'} onChange={handleBodyTypeChange} /> Compact</label>
+                <label><input type="checkbox" name="bodyType" value="Convertible" checked={searchParams.bodyType === 'Convertible'} onChange={handleBodyTypeChange} /> Convertible</label>
+                <label><input type="checkbox" name="bodyType" value="Coupe" checked={searchParams.bodyType === 'Coupe'} onChange={handleBodyTypeChange} /> Coupe</label>
+                <label><input type="checkbox" name="bodyType" value="Exotic Cars" checked={searchParams.bodyType === 'Exotic Cars'} onChange={handleBodyTypeChange} /> Exotic Cars</label>
+                <label><input type="checkbox" name="bodyType" value="Hatchback" checked={searchParams.bodyType === 'Hatchback'} onChange={handleBodyTypeChange} /> Hatchback</label>
+                <label><input type="checkbox" name="bodyType" value="Minivan" checked={searchParams.bodyType === 'Minivan'} onChange={handleBodyTypeChange} /> Minivan</label>
+                <label><input type="checkbox" name="bodyType" value="Truck" checked={searchParams.bodyType === 'Truck'} onChange={handleBodyTypeChange} /> Truck</label>
+                <label><input type="checkbox" name="bodyType" value="Sedan" checked={searchParams.bodyType === 'Sedan'} onChange={handleBodyTypeChange} /> Sedan</label>
+                <label><input type="checkbox" name="bodyType" value="Sports Car" checked={searchParams.bodyType === 'Sports Car'} onChange={handleBodyTypeChange} /> Sports Car</label>
+                <label><input type="checkbox" name="bodyType" value="Station Wagon" checked={searchParams.bodyType === 'Station Wagon'} onChange={handleBodyTypeChange} /> Station Wagon</label>
+                <label><input type="checkbox" name="bodyType" value="SUV" checked={searchParams.bodyType === 'SUV'} onChange={handleBodyTypeChange} /> SUV</label>
+
+              </div>
+            </div>
+            <div className="bg-white p-6 border-t rounded shadow-[3px_3px_9px_0px_#A4A4BA33] mb-6">
+              <h3 className="font-semibold">Number of Seats</h3>
+              <div className="flex flex-col gap-2 mt-2">
+                <label><input type="checkbox" name="seats" value="2" checked={searchParams.seats === '2'} onChange={handleSeatsChange} /> 2 seats</label>
+                <label><input type="checkbox" name="seats" value="4" checked={searchParams.seats === '4'} onChange={handleSeatsChange} /> 4 seats</label>
+                <label><input type="checkbox" name="seats" value="5" checked={searchParams.seats === '5'} onChange={handleSeatsChange} /> 5 seats</label>
+                <label><input type="checkbox" name="seats" value="6" checked={searchParams.seats === '6'} onChange={handleSeatsChange} /> 6 seats</label>
+                <label><input type="checkbox" name="seats" value="7" checked={searchParams.seats === '7'} onChange={handleSeatsChange} /> 7 seats</label>
+
+              </div>
+            </div>
+            <div className="bg-white p-6 border-t rounded shadow-[3px_3px_9px_0px_#A4A4BA33]">
+              <h3 className="font-semibold text-lg mb-2">Price ($)</h3>
+              <div className="flex items-center gap-4 mt-2">
+                <input
+                  type="range"
+                  min="0"
+                  max="10000"
+                  value={priceRange}
+                  onChange={handlePriceRangeChange}
+                  className="w-full"
+                />
+                <span className="font-semibold">
+                  ${priceRange.toLocaleString()} - $10,000
+                </span>
+              </div>
+              <div className="flex justify-between mt-2 text-sm text-gray-500">
+                <span>$0</span>
+                <span>$10,000</span>
+              </div>
+            </div>
+          </div>
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.isArray(cars) && cars.map((car, index) => (
+              <div key={index} className="bg-white rounded-lg shadow-md mb-20 transition-transform transform hover:scale-105 min-h-[300px] max-h-[450px]">
+                <div className="relative">
+                  <img src={car.image} alt={car.modele} className="rounded-t-lg w-full h-[218.33px] object-cover" />
+                  <div className="absolute top-[20.05px] left-[20px] bg-[#1ECB15] text-white rounded-[30px] px-[15px] py-[2.94px] text-sm">
+                    Great Price
                   </div>
-                  <div className="flex items-center">
-                    <img src="/images/Petrol.png" alt="" className="mr-2" />
-                    <span className="font-dm-sans text-[14px] leading-[14px]">{car.typeCarburant}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <img src="/images/Automatic.png" alt="" className="mr-2" />
-                    <span className="font-dm-sans text-[14px] leading-[14px]">{car.typeTransmission}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <img src="/images/cal.png" alt="" className="mr-2" />
-                    <span className="font-dm-sans text-[14px] leading-[14px]">{car.anneeFabrication}</span>
+                  <div className="absolute top-0 right-0 p-2">
+                    <button onClick={() => handleToggleFavourite(car._id)}>
+                      <img src={favourites.has(car._id) ? "/images/save2.png" : "/images/save.png"} alt="Favourite" />
+                    </button>
                   </div>
                 </div>
-                <hr className="my-4 border-[#E9E9E9]" />
-                <div className="flex justify-between items-center mt-4">
-                  <span className="font-dm-sans text-[20px] font-bold leading-[30px]">${car.prixParJ}</span>
-                  <Link href={`/detailsCar/${car._id}`}>
-                    <div className="text-[#1ECB15] text-sm flex items-center text-[15px] cursor-pointer">
-                      View Details <FaArrowUp className="ml-1 rotate-45" />
+                <div className="p-4">
+                  <h3 className="font-dm-sans text-[18px] font-bold leading-[21.6px]">{car.marque} {car.modele}</h3>
+                  <p className="font-dm-sans text-[14px] leading-[14px] mt-2">{car.categorie}</p>
+                  <div className="grid grid-cols-2 gap-4 mt-2">
+                    <div className="flex items-center">
+                      <img src="/images/Miles.png" alt="" className="mr-2" />
+                      <span className="font-dm-sans text-[14px] leading-[14px]">{car.kilometrage} Miles</span>
                     </div>
-                  </Link>
+                    <div className="flex items-center">
+                      <img src="/images/Petrol.png" alt="" className="mr-2" />
+                      <span className="font-dm-sans text-[14px] leading-[14px]">{car.typeCarburant}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <img src="/images/Automatic.png" alt="" className="mr-2" />
+                      <span className="font-dm-sans text-[14px] leading-[14px]">{car.typeTransmission}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <img src="/images/cal.png" alt="" className="mr-2" />
+                      <span className="font-dm-sans text-[14px] leading-[14px]">{car.anneeFabrication}</span>
+                    </div>
+                  </div>
+                  <hr className="my-4 border-[#E9E9E9]" />
+                  <div className="flex justify-between items-center mt-4">
+                    <span className="font-dm-sans text-[20px] font-bold leading-[30px]">${car.prixParJ}</span>
+                    <Link href={`/detailsCar/${car._id}`}>
+                      <div className="text-[#1ECB15] text-sm flex items-center text-[15px] cursor-pointer">
+                        View Details <FaArrowUp className="ml-1 rotate-45" />
+                      </div>
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
+            ))}
+          </div>
+        </div>
+        <div className="flex justify-center items-center mt-8 pb-8">
+          <button
+            onClick={handlePreviousPage}
+            disabled={currentPage === 1}
+            className={`w-[36px] h-[36px] rounded-l-md ${currentPage === 1 ? 'opacity-0 ' : ''}`}
+          >
+            ←
+          </button>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                const newPage = index + 1;
+                setCurrentPage(newPage);
+                localStorage.setItem('currentPage', newPage.toString()); // Stocker la page actuelle
+              }}
+              className={`w-[36px] h-[36px] ${index + 1 === currentPage ? 'bg-[#1ECB15] text-white' : 'bg-transparent text-black'} rounded-md mx-1`}
+            >
+              {index + 1}
+            </button>
           ))}
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            className={`w-[36px] h-[36px] rounded-r-md ${currentPage === totalPages ? 'opacity-0' : ''}`}
+          >
+            →
+          </button>
         </div>
       </div>
-      <div className="flex justify-center items-center mt-8 pb-8">
-        <button
-          onClick={handlePreviousPage}
-          disabled={currentPage === 1}
-          className={`w-[36px] h-[36px] rounded-l-md ${currentPage === 1 ? 'opacity-0 ' : ''}`}
-        >
-          ←
-        </button>
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index}
-            onClick={() => {
-              const newPage = index + 1;
-              setCurrentPage(newPage);
-              localStorage.setItem('currentPage', newPage.toString()); // Stocker la page actuelle
-            }}
-            className={`w-[36px] h-[36px] ${index + 1 === currentPage ? 'bg-[#1ECB15] text-white' : 'bg-transparent text-black'} rounded-md mx-1`}
-          >
-            {index + 1}
-          </button>
-        ))}
-        <button
-          onClick={handleNextPage}
-          disabled={currentPage === totalPages}
-          className={`w-[36px] h-[36px] rounded-r-md ${currentPage === totalPages ? 'opacity-0' : ''}`}
-        >
-          →
-        </button>
-      </div>
-    </div>
     </div>
   );
 };
