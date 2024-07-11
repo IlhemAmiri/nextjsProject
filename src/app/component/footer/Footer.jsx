@@ -1,6 +1,26 @@
-import React from 'react';
-
+"use client";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 const Footer = () => {
+  const [socialMedia, setSocialMedia] = useState(null);
+
+  useEffect(() => {
+    const fetchSocialMedia = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/socialmedia');
+        setSocialMedia(response.data);
+      } catch (error) {
+        console.error('Error fetching social media data', error);
+      }
+    };
+
+    fetchSocialMedia();
+  }, []);
+
+  if (!socialMedia) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <footer className="w-full bg-[#121212] text-white px-6 md:px-[2%]">
       <div className="container mx-auto py-16 flex flex-col md:flex-row space-y-12 md:space-y-0 md:space-x-8">
@@ -23,19 +43,21 @@ const Footer = () => {
           <div className="font-inter text-[14px] leading-[27.2px]">
             <div className="flex items-center space-x-2">
               <img src="/images/location.png" alt="Location" />
-              <span>08 W 36th St, New York, NY 10001</span>
+              <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(socialMedia.localisation)}`} target="_blank" rel="noopener noreferrer">
+                <span>{socialMedia.localisation}</span>
+              </a>
             </div>
             <div className="flex items-center space-x-2 mt-2">
               <img src="/images/phone.png" alt="Phone" />
-              <span>+1 333 9296</span>
+              <a href={`tel:${socialMedia.numTel}`}>
+                <span>{socialMedia.numTel}</span>
+              </a>
             </div>
             <div className="flex items-center space-x-2 mt-2">
               <img src="/images/mail.png" alt="Mail" />
-              <span>contact@example.com</span>
-            </div>
-            <div className="flex items-center space-x-2 mt-2">
-              <img src="/images/pdf.png" alt="PDF" />
-              <span>Download Brochure</span>
+              <a href={`mailto:${socialMedia.email}`}>
+                <span>{socialMedia.email}</span>
+              </a>
             </div>
           </div>
         </div>
@@ -55,10 +77,24 @@ const Footer = () => {
         {/* Social Media Icons Section */}
         <div className="flex flex-col items-center space-y-4 px-4 md:mt-0">
           <div className="flex space-x-2">
-            <a href="#"><img src="/images/facebook.png" alt="Facebook" className="w-[40px] h-[40px]" /></a>
-            <a href="#"><img src="/images/x.png" alt="Twitter" className="w-[40px] h-[40px]" /></a>
-            <a href="#"><img src="/images/linkedin.png" alt="LinkedIn" className="w-[40px] h-[40px]" /></a>
+            {socialMedia.lienFacebook && (
+              <a href={socialMedia.lienFacebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                <img src="/images/facebook.png" alt="Facebook" className="w-[40px] h-[40px]" />
+              </a>
+            )}
+            {socialMedia.lienTwitter && (
+              <a href={socialMedia.lienTwitter} target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+                <img src="/images/x.png" alt="Twitter" className="w-[40px] h-[40px]" />
+              </a>
+            )}
+            {socialMedia.lienYoutube && (
+              <a href={socialMedia.lienLinkedin} target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                <img src="/images/linkedin.png" alt="LinkedIn" className="w-[40px] h-[40px]" />
+              </a>
+            )}
           </div>
+
+
           {/* Input with Sign In button */}
           <div className="pt-2 flex justify-center items-center">
             <div className="flex items-center w-full max-w-lg sm:max-w-md h-[71.75px] bg-[#FFFFFF21] border border-[#FFFFFF21] rounded-[60px] overflow-hidden px-2">
@@ -80,11 +116,17 @@ const Footer = () => {
       {/* Bottom Footer */}
       <div className="w-full py-4 bg-[#121212]">
         <div className="container mx-auto text-center border-t border-gray-700 pt-4">
-          <p className="font-inter text-[15px] leading-[27.2px]">
-            &copy; 2023 Rentaly. All rights reserved.
-          </p>
+          <div className="flex items-center justify-center space-x-2">
+            <a href="https://dundill.tn/" target="_blank" rel="noopener noreferrer">
+              <img src="/images/dundill.png" alt="Dundill Logo" className="w-10 h-10" />
+            </a>
+            <p className="font-inter text-[15px] leading-[27.2px]">
+              &copy; 2023 Rentaly. All rights reserved. Découvrez nos partenaires chez Dundill.
+            </p>
+          </div>
         </div>
       </div>
+
     </footer>
   );
 };
