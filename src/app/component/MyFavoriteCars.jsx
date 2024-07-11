@@ -33,7 +33,7 @@ const MyFavoriteCars = ({ cars }) => {
                     ))}
                 </div>
             ) : (
-                <p className="text-gray-700">Vous n'avez pas de voitures favorites pour le moment.</p>
+                <p className="text-gray-700">You don't have any favorite cars at the moment.</p>
             )}
         </div>
     );

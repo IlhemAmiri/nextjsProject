@@ -26,21 +26,49 @@ const SearchResultsPage = () => {
   const [isAuth, setIsAuth] = useState(false);
   const [cars, setCars] = useState<Car[]>([]);
   const searchParams = useSearchParams();
+  const [client, setClient] = useState(null);
+  const [userId, setUserId] = useState<string | null>(null);
+
   const marque = searchParams.get('marque');
   const router = useRouter();
   useEffect(() => {
+    const fetchClientData = async (userId: string, token: string) => {
+      try {
+        const response = await axios.get(`http://localhost:3001/users/clients/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        setClient(response.data);
+      } catch (error) {
+        console.error('Error fetching client data:', error);
+      }
+    };
+
     const fetchCars = async () => {
       try {
         if (marque) {
           const response = await axios.get(`http://localhost:3001/cars/search/search?marque=${marque}`);
           setCars(response.data);
         }
-        const authStatus = localStorage.getItem('isAuth') === 'true';
-        setIsAuth(authStatus);
       } catch (error) {
-        console.error('There was an error fetching the car data!', error);
+        console.error('Error fetching car data:', error);
       }
     };
+
+    const authStatus = localStorage.getItem('isAuth') === 'true';
+    setIsAuth(authStatus);
+    const storedUserId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+
+    if (storedUserId) {
+      setUserId(storedUserId);
+      if (authStatus && token) {
+        fetchClientData(storedUserId, token);
+      }
+    }
+
     fetchCars();
   }, [marque]);
 
@@ -52,7 +80,7 @@ const SearchResultsPage = () => {
 
   return (
     <div>
-      <NavCars isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+      <NavCars isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} client={client} />
       <SearchCar cars={cars} marque={marque} />
     </div>
   );

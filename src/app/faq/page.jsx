@@ -10,6 +10,7 @@ export default function FAQPage() {
     const [openIndexes, setOpenIndexes] = useState([]);
     const [menuOpen, setMenuOpen] = useState(false);
     const [isAuth, setIsAuth] = useState(false);
+    const [client, setClient] = useState(null);
 
     useEffect(() => {
         const authStatus = localStorage.getItem('isAuth') === 'true';
@@ -24,9 +25,29 @@ export default function FAQPage() {
             }
         };
 
-        fetchFaqs();
-    }, []);
+        const fetchClientData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const userId = localStorage.getItem('userId');
+                if (!userId || !token) return;
+                const response = await axios.get(`http://localhost:3001/users/clients/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                setClient(response.data);
+            } catch (error) {
+                console.error('Error fetching client data:', error);
+            }
+        };
 
+        fetchFaqs();
+
+        if (authStatus) {
+            fetchClientData();
+        }
+    }, []);
     const toggleFaq = (index) => {
         setOpenIndexes((prevOpenIndexes) =>
             prevOpenIndexes.includes(index)
@@ -42,7 +63,7 @@ export default function FAQPage() {
     };
     return (
         <div className='bg-white'>
-            <NavProfile isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+            <NavProfile isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} client={client} />
             <FAQuestion faqs={faqs} openIndexes={openIndexes} toggleFaq={toggleFaq} />
         </div>
     );

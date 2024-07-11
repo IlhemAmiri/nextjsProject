@@ -128,7 +128,7 @@ const UpdateUserPage = ({ params }) => {
 
   return (
     <div>
-       <NavProfile isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+       <NavProfile isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} client={client}/>
        <UpdateUserInfo
         client={client}
         setClient={setClient}

@@ -1,15 +1,15 @@
 import Link from 'next/link';
 import { useState } from 'react';
 
-const AccueilHome = ({ isAuth, handleLogout }) => {
+const AccueilHome = ({ isAuth, handleLogout, client }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <div className="h-screen bg-cover bg-center bg-[url('/images/11.jpg')]">
       <div className="bg-[rgba(41,41,41,0.38)] backdrop-blur-md bg-opacity-30 text-white flex justify-between items-center px-6 lg:px-12 py-4 shadow-md">
-      {/* <div className="bg-[rgba(41,41,41,0.38)] backdrop-blur-md bg-opacity-30 text-white flex justify-between items-center px-[12%] h-[102px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]"> si t7eb padding x*/}
+        {/* <div className="bg-[rgba(41,41,41,0.38)] backdrop-blur-md bg-opacity-30 text-white flex justify-between items-center px-[12%] h-[102px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]"> si t7eb padding x*/}
         <div className="flex justify-center">
-          <a href="#">
+          <a href="/">
             <img src="/images/Container.png" alt="Logo" className='w-40 h-14' />
           </a>
         </div>
@@ -31,12 +31,19 @@ const AccueilHome = ({ isAuth, handleLogout }) => {
           </button>
         </div>
         {isAuth ? (
-          <button
-            onClick={handleLogout}
-            className="hidden md:flex bg-[#1ECB15] text-white items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105"
-          >
-            Logout
-          </button>
+          <div className="hidden md:flex items-center">
+            {client && (
+              <a href="/profile">
+                <img src={client.image} alt="Profile" className="rounded-full w-10 h-10 mr-4 border-2 border-[#1ECB15]" />
+              </a>
+            )}
+            <button
+              onClick={handleLogout}
+              className="bg-[#1ECB15] text-white items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105"
+            >
+              Logout
+            </button>
+          </div>
         ) : (
           <Link href="/signin">
             <div className="hidden md:flex bg-[#1ECB15] text-white items-center justify-center rounded w-28 h-9 font-extrabold text-sm tracking-wide font-outfit transition-transform hover:scale-105">
@@ -53,6 +60,11 @@ const AccueilHome = ({ isAuth, handleLogout }) => {
           <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">My Account</a>
           <a href="/blogs" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">Blogs</a>
           <a href="/faq" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">FAQs</a>
+          {client && (
+            <a href="/profile">
+              <img src={client.image} alt="Profile" className="rounded-full w-8 h-8 mr-4 border-2 border-[#1ECB15]" />
+            </a>
+          )}
           {isAuth ? (
             <button
               onClick={handleLogout}

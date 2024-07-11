@@ -52,6 +52,7 @@ const CarDetailsPage = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
+  const [client, setClient] = useState(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -59,6 +60,25 @@ const CarDetailsPage = () => {
       setToken(localStorage.getItem('token'));
       const authStatus = localStorage.getItem('isAuth') === 'true';
       setIsAuth(authStatus);
+
+      const fetchClientData = async () => {
+        try {
+          const token = localStorage.getItem('token');
+          const response = await axios.get(`http://localhost:3001/users/clients/${userId}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+          setClient(response.data);
+        } catch (error) {
+          console.error('Error fetching client data:', error);
+        }
+      };
+
+      if (userId) {
+        fetchClientData();
+      }
     }
   }, []);
 
@@ -144,7 +164,7 @@ const CarDetailsPage = () => {
   };
   return (
     <div>
-      <NavBlog isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+      <NavBlog isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} client={client}/>
       <CarDetails
         car={car}
         showRatingForm={showRatingForm}

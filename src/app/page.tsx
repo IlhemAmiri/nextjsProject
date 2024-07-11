@@ -39,8 +39,25 @@ const Home = () => {
   const [cars, setCars] = useState<Car[]>([]);
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [isAuth, setIsAuth] = useState(false);
+  const [client, setClient] = useState(null);
   const router = useRouter();
   useEffect(() => {
+    const fetchClientData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+        if (!userId || !token) return;
+        const response = await axios.get(`http://localhost:3001/users/clients/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        setClient(response.data);
+      } catch (error) {
+        console.error('Error fetching client data:', error);
+      }
+    };
     axios.get('http://localhost:3001/cars?page=1&limit=4')
       .then(response => {
         console.log(response.data);
@@ -59,6 +76,9 @@ const Home = () => {
       });
     const authStatus = localStorage.getItem('isAuth') === 'true';
     setIsAuth(authStatus);
+    if (authStatus) {
+      fetchClientData();
+    }
   }, []);
   const handleLogout = () => {
     localStorage.clear();
@@ -74,7 +94,7 @@ const Home = () => {
 
   return (
     <div>
-      <AccueilHome isAuth={isAuth} handleLogout={handleLogout} />
+      <AccueilHome isAuth={isAuth} handleLogout={handleLogout} client={client}/>
       <OurVehicle cars={cars} />
       <Customers />
       <WhyChooseUs />

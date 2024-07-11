@@ -25,6 +25,7 @@ const Page = () => {
   const [isAuth, setIsAuth] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [favourites, setFavourites] = useState<Set<string>>(new Set());
+  const [client, setClient] = useState(null);
   const [currentPage, setCurrentPage] = useState(() => {
     return parseInt(localStorage.getItem('currentPage') || '1', 10);
   });
@@ -111,7 +112,19 @@ const Page = () => {
       alert(`An error occurred while toggling favourite status: ${error.response?.data?.message || error.message}`);
     }
   };
-
+  const fetchClientData = async (userId: string, token: string) => {
+    try {
+      const response = await axios.get(`http://localhost:3001/users/clients/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      setClient(response.data);
+    } catch (error) {
+      console.error('Error fetching client data:', error);
+    }
+  };
   const fetchCars = async (params = {}) => {
     try {
       const response = await axios.get(`http://localhost:3001/cars/recherche/check`, {
@@ -132,7 +145,14 @@ const Page = () => {
     fetchCars(searchParams);
     const authStatus = localStorage.getItem('isAuth') === 'true';
     setIsAuth(authStatus);
-  }, [currentPage, itemsPerPage]);
+
+    const storedUserId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+
+    if (storedUserId && authStatus && token) {
+      fetchClientData(storedUserId, token);
+    }
+  }, [currentPage, itemsPerPage, searchParams]);
 
   useEffect(() => {
     fetchCars(searchParams);
@@ -255,7 +275,7 @@ const Page = () => {
   };
   return (
     <div>
-      <NavCars isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+      <NavCars isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} client={client} />
       <div className="bg-gray-100">
         <div className="text-center pt-12">
           <h2 className="font-outfit text-[42px] font-semibold leading-[50px] tracking-[-1.8px]">Explore All Vehicles</h2>

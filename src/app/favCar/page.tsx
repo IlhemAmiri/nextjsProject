@@ -121,7 +121,7 @@ const FavCarPage = () => {
 
   return (
     <div>
-      <NavProfile isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+      <NavProfile isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} client={client}/>
       <div className="container mx-auto px-6 py-8">
         <div className="flex flex-col md:flex-row md:space-y-0 md:space-x-6">
           <DashboardFavCar

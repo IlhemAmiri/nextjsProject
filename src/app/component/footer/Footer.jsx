@@ -3,7 +3,7 @@ import React from 'react';
 const Footer = () => {
   return (
     <footer className="w-full bg-[#121212] text-white px-6 md:px-[2%]">
-      <div className="container mx-auto py-16 flex flex-col md:flex-row space-y-12 md:space-y-0 md:space-x-12">
+      <div className="container mx-auto py-16 flex flex-col md:flex-row space-y-12 md:space-y-0 md:space-x-8">
         {/* Logo */}
         <div className="flex flex-col space-y-4">
           <img src="/images/Container.png" alt="Logo" className="w-[156px] h-[56px]" />
@@ -44,11 +44,11 @@ const Footer = () => {
         <div className="flex-1 flex flex-col space-y-4 px-4">
           <h3 className="font-outfit text-[18px] font-semibold">Quick Links</h3>
           <ul className="font-inter text-[14px] leading-[27.2px] space-y-2">
-            <li>About</li>
-            <li>Blog</li>
-            <li>Careers</li>
-            <li>News</li>
-            <li>Partners</li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/cars">Cars</a></li>
+            <li><a href="/profile">My Account</a></li>
+            <li><a href="/blogs">Blogs</a></li>
+            <li><a href="/faq">FAQs</a></li>
           </ul>
         </div>
 
@@ -60,7 +60,7 @@ const Footer = () => {
             <a href="#"><img src="/images/linkedin.png" alt="LinkedIn" className="w-[40px] h-[40px]" /></a>
           </div>
           {/* Input with Sign In button */}
-          <div className="py-20 flex justify-center items-center">
+          <div className="pt-2 flex justify-center items-center">
             <div className="flex items-center w-full max-w-lg sm:max-w-md h-[71.75px] bg-[#FFFFFF21] border border-[#FFFFFF21] rounded-[60px] overflow-hidden px-2">
               <input
                 type="text"
@@ -70,7 +70,6 @@ const Footer = () => {
               <button className="w-[95.31px] h-[51.75px] bg-[#1ECB15] text-white text-[15px] flex items-center justify-center rounded-[60px]">Sign In</button>
             </div>
           </div>
-
         </div>
       </div>
       {/* Arrow Section */}
@@ -86,7 +85,6 @@ const Footer = () => {
           </p>
         </div>
       </div>
-
     </footer>
   );
 };

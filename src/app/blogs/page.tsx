@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import NavBlog from '../component/NavBlog';
-import AllBlogs from '../component/AllBlogs'
+import AllBlogs from '../component/AllBlogs';
 
 interface Blog {
     _id: string;
@@ -23,6 +23,7 @@ const PageBlogs = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const blogsPerPage = 12;
     const [totalBlogs, setTotalBlogs] = useState(0);
+    const [client, setClient] = useState(null);
 
     const router = useRouter();
 
@@ -42,6 +43,22 @@ const PageBlogs = () => {
         // Check authentication status from local storage
         const authStatus = localStorage.getItem('isAuth') === 'true';
         setIsAuth(authStatus);
+
+        // Fetch client data if authenticated
+        if (authStatus) {
+            const userId = localStorage.getItem('userId');
+            const token = localStorage.getItem('token');
+            axios.get(`http://localhost:3001/users/clients/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            }).then(response => {
+                setClient(response.data);
+            }).catch(error => {
+                console.error('Failed to fetch client data:', error);
+            });
+        }
     }, [currentPage]);
 
     const handleLogout = () => {
@@ -58,7 +75,7 @@ const PageBlogs = () => {
 
     return (
         <div>
-            <NavBlog isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+            <NavBlog isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} client={client} />
             <AllBlogs
                 blogs={blogs}
                 currentPage={currentPage}

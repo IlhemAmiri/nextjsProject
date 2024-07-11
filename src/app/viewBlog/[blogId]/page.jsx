@@ -52,7 +52,7 @@ const BlogDetails = () => {
 
     return (
         <div className='bg-white'>
-            <NavProfile isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+            <NavProfile isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} client={client}/>
 
             {blog && <ViewBlogDetails blog={blog} />}
         </div>

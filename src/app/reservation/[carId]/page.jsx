@@ -11,6 +11,7 @@ const ReservationPage = () => {
   const { carId } = useParams();
   const router = useRouter();
   const [car, setCar] = useState(null);
+  const [client, setClient] = useState(null);
   const [isAuth, setIsAuth] = useState(localStorage.getItem('isAuth') === 'true');
   const [formData, setFormData] = useState({
     dateDebut: new Date(),
@@ -27,6 +28,21 @@ const ReservationPage = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
+    const fetchClientData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`http://localhost:3001/users/clients/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        setClient(response.data);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des détails du client :', error);
+      }
+    };
+
     const fetchCarDetails = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -45,7 +61,11 @@ const ReservationPage = () => {
     if (carId) {
       fetchCarDetails();
     }
-  }, [carId]);
+
+    if (userId) {
+      fetchClientData();
+    }
+  }, [carId, userId]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -117,7 +137,7 @@ const ReservationPage = () => {
 
   return (
     <div>
-      <NavProfile isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+      <NavProfile isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} client={client} />
       <ReservationForm
         car={car}
         formData={formData}
