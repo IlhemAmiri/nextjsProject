@@ -73,12 +73,26 @@ const UpdateUserPage = ({ params }) => {
     setIsAuth(false);
     router.push('/signin');
   };
+  const isAdult = (date) => {
+    const today = new Date();
+    const birthDate = new Date(date);
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      return age - 1 >= 18;
+    }
+    return age >= 18;
+  };
 
   const handleFileChange = (e) => {
     setClient({ ...client, image: e.target.files[0] });
   };
 
   const handleUpdate = async () => {
+    if (!isAdult(client.dateNaissance)) {
+      setError('You must be at least 18 years old.');
+      return;
+    }
     const formData = new FormData();
     formData.append('nom', client.nom);
     formData.append('prenom', client.prenom);

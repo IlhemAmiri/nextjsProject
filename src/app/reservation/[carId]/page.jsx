@@ -105,6 +105,14 @@ const ReservationPage = () => {
     if (dateDebut <= now || dateFin <= now) {
       newErrors.push('Dates must be in the future');
     }
+    
+    // Vérification de la date d'expiration du permis
+    if (client) {
+      const dateExpirationPermis = new Date(client.dateExpirationPermis);
+      if (dateExpirationPermis < now) {
+        newErrors.push('The client\'s driving license has expired');
+      }
+    }
 
     if (newErrors.length === 0) {
       try {
