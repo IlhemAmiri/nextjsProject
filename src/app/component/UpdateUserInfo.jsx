@@ -3,8 +3,15 @@
 import React from 'react';
 import Link from 'next/link';
 import { FaUser, FaCalendar, FaCar, FaSignOutAlt } from 'react-icons/fa';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const UpdateUserInfo = ({ client, setClient, handleFileChange, handleUpdate, error, activePage, handleItemClick, handleLogout }) => {
+    const handlePhoneChange = (value) => {
+        // Ajoutez le signe "+" si nécessaire
+        const formattedValue = value.startsWith('+') ? value : `+${value}`;
+        setClient({ ...client, numTel: formattedValue });
+    };
     return (
         <div className="flex justify-center py-12 bg-gray-100">
             <div className="w-full max-w-7xl flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6  pl-[2.5%]">
@@ -93,16 +100,41 @@ const UpdateUserInfo = ({ client, setClient, handleFileChange, handleUpdate, err
                                     onChange={(e) => setClient({ ...client, email: e.target.value })}
                                 />
                             </div>
-                            <div>
-                                <label htmlFor="phone" className="block font-medium mb-2">Phone</label>
-                                <input
-                                    type="text"
-                                    id="phone"
-                                    className="w-full border rounded px-3 py-2"
-                                    value={client.numTel}
-                                    onChange={(e) => setClient({ ...client, numTel: e.target.value })}
-                                />
+                            <div className="mb-4">
+                                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone</label>
+                                <div className="mt-1 flex items-center">
+                                    <PhoneInput
+                                        country={'tn'} // Définissez ici le pays par défaut souhaité
+                                        value={client.numTel}
+                                        onChange={handlePhoneChange}
+                                        inputProps={{
+                                            name: 'numTel',
+                                            required: true,
+                                            className: 'block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm',
+                                        }}
+                                        containerStyle={{
+                                            display: 'flex',
+                                            flexDirection: 'row-reverse',
+                                            alignItems: 'center',
+                                            width: '100%',
+                                            position: 'relative', // Ajouté pour gérer le positionnement absolu de la liste déroulante
+                                        }}
+                                        buttonStyle={{
+                                            order: 2,
+                                            marginLeft: '10px',
+                                        }}
+                                        inputStyle={{
+                                            flex: '1',
+                                        }}
+                                        dropdownStyle={{
+                                            position: 'absolute', // Assure que la liste déroulante est positionnée relativement au conteneur
+                                            right: 0, // Aligne la liste déroulante à droite
+                                            zIndex: 50, // Assure que la liste déroulante est au-dessus des autres éléments
+                                        }}
+                                    />
+                                </div>
                             </div>
+
                             <div>
                                 <label htmlFor="adresse" className="block font-medium mb-2">Address</label>
                                 <input
