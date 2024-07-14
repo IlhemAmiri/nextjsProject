@@ -80,7 +80,7 @@ const CarDetailsPage = () => {
         fetchClientData();
       }
     }
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     if (carId) {
@@ -116,6 +116,9 @@ const CarDetailsPage = () => {
     }
   }, [carId]);
 
+  useEffect(() => {
+    console.log('Client data:', client);
+  }, [client]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -164,7 +167,7 @@ const CarDetailsPage = () => {
   };
   return (
     <div>
-      <NavBlog isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} client={client}/>
+      <NavBlog isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} client={client} />
       <CarDetails
         car={car}
         showRatingForm={showRatingForm}
