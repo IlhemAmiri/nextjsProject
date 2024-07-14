@@ -15,6 +15,7 @@
     "@types/react-datepicker": "^6.2.0",
     "axios": "^1.7.2",
     "framer-motion": "^11.2.11",
+    "jsonwebtoken": "^9.0.2",
     "leaflet": "^1.9.4",
     "next": "14.2.4",
     "nominatim-client": "^3.2.1",

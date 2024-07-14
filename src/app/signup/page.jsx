@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const Signup = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -26,11 +28,28 @@ const Signup = () => {
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    if (token) {
+      // Handle token (e.g., save it to local storage or context, then redirect)
+      console.log('Token received:', token);
+      // Example: save token and redirect
+      localStorage.setItem('authToken', token);
+      router.push('/profile');
+    }
+  }, [router]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  // Gestionnaire de changement pour le champ de numéro de téléphone
+  const handlePhoneChange = (value) => {
+    const formattedValue = value.startsWith('+') ? value : `+${value}`;
+    setFormData({ ...formData, numTel: formattedValue });
   };
 
   const handleFileChange = (e) => {
@@ -40,6 +59,11 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isMounted) return;
+
+    if (!isAdult(formData.dateNaissance)) {
+      setError('You must be at least 18 years old to register.');
+      return;
+    }
 
     const formDataToSubmit = new FormData();
     for (const key in formData) {
@@ -64,6 +88,16 @@ const Signup = () => {
       console.error('Error during registration:', error);
       setError(error.message || 'Failed to register');
     }
+  };
+  const isAdult = (dateNaissance) => {
+    const today = new Date();
+    const birthDate = new Date(dateNaissance);
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      return age - 1 >= 18;
+    }
+    return age >= 18;
   };
 
   if (!isMounted) {
@@ -203,16 +237,33 @@ const Signup = () => {
           </div>
           <div className="mb-4">
             <label htmlFor="numTel" className="block text-sm font-medium text-gray-700">Phone Number</label>
-            <input
-              type="text"
-              id="numTel"
-              name="numTel"
-              value={formData.numTel}
-              onChange={handleChange}
-              required
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
+            <div className="mt-1 flex items-center">
+              <PhoneInput
+                country={'tn'} // Définissez ici le pays par défaut souhaité
+                value={formData.numTel}
+                onChange={handlePhoneChange}
+                inputProps={{
+                  name: 'numTel',
+                  required: true,
+                  className: 'block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm',
+                }}
+                containerStyle={{
+                  display: 'flex',
+                  flexDirection: 'row-reverse',
+                  alignItems: 'center',
+                  width: '100%',
+                }}
+                buttonStyle={{
+                  order: 2,
+                  marginLeft: '10px',
+                }}
+                inputStyle={{
+                  flex: '1',
+                }}
+              />
+            </div>
           </div>
+
           <div className="mb-4">
             <label htmlFor="dateNaissance" className="block text-sm font-medium text-gray-700">Date of Birth</label>
             <input
@@ -275,29 +326,38 @@ const Signup = () => {
           </div>
         </form>
         <div className="relative flex items-center mt-[40px]">
-            <div className="flex-grow border-t border-[#000000] opacity-20"></div>
-            <span className="mx-4 text-[#404040] font-inter font-normal text-[14px] leading-[27.2px] tracking-[-0.2px]">Or sign up with</span>
-            <div className="flex-grow border-t border-[#000000] opacity-20"></div>
-          </div>
-          <div className="flex justify-between mt-[20px] mb-4">
-            <button className="w-[160.66px] h-[39.19px] p-[5.4px_10px_6.59px_10px] rounded-[5px] bg-[#F2F2F2] flex items-center">
-              <img src="/images/google.png" alt="Google" className="mr-[16.9px]" />
-              <span className="font-bold">Google</span>
-            </button>
-            <button className="w-[160.66px] h-[39.19px] p-[5.4px_10px_6.59px_10px] rounded-[5px] bg-[#F2F2F2] flex items-center">
-              <img src="/images/facebook1.png" alt="Facebook" className="mr-[10px]" />
-              <span className="font-bold">Facebook</span>
-            </button>
-          </div>
-          <div className="text-center mt-6">
-            <Link href="/signin">
-              <div className=" font-inter font-normal text-[14px] leading-[19.36px] cursor-pointer">
-                Already have an account? <span className='text-[#1ECB15]'> Sign in</span>
-              </div>
-            </Link>
-          </div>
+          <div className="flex-grow border-t border-[#000000] opacity-20"></div>
+          <span className="mx-4 text-[#404040] font-inter font-normal text-[14px] leading-[27.2px] tracking-[-0.2px]">Or sign up with</span>
+          <div className="flex-grow border-t border-[#000000] opacity-20"></div>
+        </div>
+        <div className="flex justify-between mt-[20px] mb-4">
+          <button
+            onClick={() => window.location.href = 'http://localhost:3001/auth/google'}
+            className="w-[160.66px] h-[39.19px] p-[5.4px_10px_6.59px_10px] rounded-[5px] bg-[#F2F2F2] flex items-center"
+          >
+            <img src="/images/google.png" alt="Google" className="mr-[16.9px]" />
+            <span className="font-bold">Google</span>
+          </button>
+          <button
+            onClick={() => window.location.href = 'http://localhost:3001/auth/facebook'}
+            className="w-[160.66px] h-[39.19px] p-[5.4px_10px_6.59px_10px] rounded-[5px] bg-[#F2F2F2] flex items-center"
+          >
+            <img src="/images/facebook1.png" alt="Facebook" className="mr-[10px]" />
+            <span className="font-bold">Facebook</span>
+          </button>
+        </div>
+
+
+
+        <div className="text-center mt-6">
+          <Link href="/signin">
+            <div className=" font-inter font-normal text-[14px] leading-[19.36px] cursor-pointer">
+              Already have an account? <span className='text-[#1ECB15]'> Sign in</span>
+            </div>
+          </Link>
         </div>
       </div>
+    </div>
   );
 };
 

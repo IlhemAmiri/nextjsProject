@@ -7,6 +7,8 @@ const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [isMounted, setIsMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -14,10 +16,40 @@ const Page = () => {
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const role = urlParams.get('role') || 'client';
+    const userId = urlParams.get('userId');
+    if (token) {
+      localStorage.setItem('token', token);
+      localStorage.setItem('role', role);
+      localStorage.setItem('isAuth', 'true');
+      localStorage.setItem('userId', userId);
+      router.push('/');
+    }
+  }, [router]);
 
   const handleLogin = async () => {
     if (!isMounted) return;
+
+    setEmailError('');
+    setPasswordError('');
+
+    let valid = true;
+    if (!email) {
+      setEmailError('Email is required');
+      valid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError('Email address is invalid');
+      valid = false;
+    }
+
+    if (!password) {
+      setPasswordError('Password is required');
+      valid = false;
+    }
+
+    if (!valid) return;
 
     try {
       const response = await fetch('http://localhost:3001/users/login', {
@@ -32,7 +64,7 @@ const Page = () => {
       }
       const data = await response.json();
       localStorage.setItem('token', data.token);
-      localStorage.setItem('role', data.role);
+      localStorage.setItem('role', data.role || 'client');
       localStorage.setItem('isAuth', 'true');
       localStorage.setItem('userId', data.userId);
       router.push('/');
@@ -44,6 +76,14 @@ const Page = () => {
   if (!isMounted) {
     return null;
   }
+
+  const handleFacebookLogin = () => {
+    window.location.href = 'http://localhost:3001/auth/facebook';
+  };
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://localhost:3001/auth/google';
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-1 bg-cover bg-center bg-[url('/images/signin.png')]">
@@ -95,19 +135,23 @@ const Page = () => {
               <h2 className="text-[#020202] font-outfit font-semibold text-[20px] leading-[26px] tracking-[-0.2px]">Login</h2>
               <input
                 type="email"
-                placeholder="Your Address Mail"
+                placeholder="Your Email Address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-[329.33px] h-[45.59px] mt-10 p-[12px_10px_13.59px_10px] rounded-[6px] bg-[#00000006] border-[2px] border-[#EEEEEE] text-[#757575] font-inter font-normal text-[16px] leading-[19.36px] placeholder-[#757575]"
+                className={`w-[329.33px] h-[45.59px] mt-10 p-[12px_10px_13.59px_10px] rounded-[6px] bg-[#00000006] border-[2px] ${emailError ? 'border-red-500' : 'border-[#EEEEEE]'} text-[#757575] font-inter font-normal text-[16px] leading-[19.36px] placeholder-[#757575]`}
+                required
               />
+              {emailError && <p className="text-red-500 text-sm">{emailError}</p>}
               <input
                 type="password"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-[329.33px] h-[45.59px] mt-[10px] p-[12px_10px_13.59px_10px] rounded-[6px] bg-[#00000006] border-[2px] border-[#EEEEEE] text-[#757575] font-inter font-normal text-[16px] leading-[19.36px] placeholder-[#757575]"
+                className={`w-[329.33px] h-[45.59px] mt-[10px] p-[12px_10px_13.59px_10px] rounded-[6px] bg-[#00000006] border-[2px] ${passwordError ? 'border-red-500' : 'border-[#EEEEEE]'} text-[#757575] font-inter font-normal text-[16px] leading-[19.36px] placeholder-[#757575]`}
+                required
               />
-              {error && <p>{error}</p>}
+              {passwordError && <p className="text-red-500 text-sm">{passwordError}</p>}
+              {error && <p className="text-red-500 text-sm">{error}</p>}
               <button onClick={handleLogin} className="w-[329.33px] h-[45.19px] mt-[15px] p-[3.4px_0px_4.59px_0px] rounded-[4.8px] bg-[#1ECB15] text-white font-inter font-bold text-[16px] leading-[19.36px]">Sign In</button>
               <div className="flex items-center mt-[40px]">
                 <div className="flex-grow border-t border-[#000000] opacity-20"></div>
@@ -115,11 +159,11 @@ const Page = () => {
                 <div className="flex-grow border-t border-[#000000] opacity-20"></div>
               </div>
               <div className="flex justify-between mt-[20px] mb-4">
-                <button className="w-[160.66px] h-[39.19px] p-[5.4px_10px_6.59px_10px] rounded-[5px] bg-[#F2F2F2] flex items-center">
+                <button onClick={handleGoogleLogin} className="w-[160.66px] h-[39.19px] p-[5.4px_10px_6.59px_10px] rounded-[5px] bg-[#F2F2F2] flex items-center">
                   <img src="/images/google.png" alt="Google" className="mr-[16.9px]" />
                   <span className="font-bold">Google</span>
                 </button>
-                <button className="w-[160.66px] h-[39.19px] p-[5.4px_10px_6.59px_10px] rounded-[5px] bg-[#F2F2F2] flex items-center">
+                <button onClick={handleFacebookLogin} className="w-[160.66px] h-[39.19px] p-[5.4px_10px_6.59px_10px] rounded-[5px] bg-[#F2F2F2] flex items-center">
                   <img src="/images/facebook1.png" alt="Facebook" className="mr-[10px]" />
                   <span className="font-bold">Facebook</span>
                 </button>
@@ -135,7 +179,6 @@ const Page = () => {
           </div>
         </div>
       </div>
-
     </div>
   );
 }
