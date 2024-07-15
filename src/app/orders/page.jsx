@@ -28,30 +28,42 @@ const OrderPage = () => {
 
       try {
         const token = localStorage.getItem('token');
-        const [clientResponse, reservationsResponse] = await Promise.all([
-          axios.get(`http://localhost:3001/users/clients/${userId}`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }),
-          axios.get(`http://localhost:3001/reservations/client/${userId}`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          })
-        ]);
-
+        const clientResponse = await axios.get(`http://localhost:3001/users/clients/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
         setClient(clientResponse.data);
+      } catch (error) {
+        console.error('Error fetching client data:', error);
+        setError('Failed to fetch client data');
+      }
+    };
+
+    const fetchReservationsData = async () => {
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        return;
+      }
+
+      try {
+        const token = localStorage.getItem('token');
+        const reservationsResponse = await axios.get(`http://localhost:3001/reservations/client/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
         setReservations(reservationsResponse.data);
       } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Failed to fetch client or reservations data');
+        console.error('Error fetching reservations data:', error);
+        setError('');
       }
     };
 
     fetchClientData();
+    fetchReservationsData();
     const authStatus = localStorage.getItem('isAuth') === 'true';
     setIsAuth(authStatus);
   }, [router]);
@@ -97,6 +109,7 @@ const OrderPage = () => {
     localStorage.setItem('reservationId', reservationId);
     router.push('/payment');
   };
+
   const fetchPaymentStatus = async (reservationId) => {
     try {
       const token = localStorage.getItem('token');
@@ -113,12 +126,16 @@ const OrderPage = () => {
       return false;
     }
   };
-  
-
 
   const renderOrders = (status) => {
     const now = new Date();
-    return reservations.filter(reservation => reservation.status === status && new Date(reservation.dateDebut) >= now).map((reservation, index) => (
+    const filteredReservations = reservations.filter(reservation => reservation.status === status && new Date(reservation.dateDebut) >= now);
+  
+    if (filteredReservations.length === 0) {
+      return null;
+    }
+  
+    return filteredReservations.map((reservation, index) => (
       <div key={reservation._id} className="block lg:table-row mb-4 text-[15px] lg:mb-0">
         <div className="block lg:table-cell p-2 font-bold">{index + 1}</div>
         <div className="block lg:table-cell p-2 font-bold">{reservation.idVoiture ? `${reservation.idVoiture.marque} ${reservation.idVoiture.modele}` : 'Car details not available'}</div>
@@ -132,16 +149,16 @@ const OrderPage = () => {
         <div className="block lg:table-cell p-2">{renderOrderStatus(reservation.status)}</div>
         {status === 'confirmer' && (
           <div className="block lg:table-cell p-2">
-             {reservation.statusPaiement === 'payee' ? (
-            <span>Already paid</span>
-          ) : (
-            <button
-              onClick={() => handlePayClick(reservation._id)}
-              className="bg-blue-500 text-white py-1 px-3 rounded-full hover:bg-blue-600 transition duration-200"
-            >
-              <FaCreditCard size={20} />
-            </button>
-          )}
+            {reservation.statusPaiement === 'payee' ? (
+              <span>Already paid</span>
+            ) : (
+              <button
+                onClick={() => handlePayClick(reservation._id)}
+                className="bg-blue-500 text-white py-1 px-3 rounded-full hover:bg-blue-600 transition duration-200"
+              >
+                <FaCreditCard size={20} />
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -150,7 +167,13 @@ const OrderPage = () => {
 
   const renderPastOrders = () => {
     const now = new Date();
-    return reservations.filter(reservation => new Date(reservation.dateDebut) < now).map((reservation, index) => (
+    const pastReservations = reservations.filter(reservation => new Date(reservation.dateDebut) < now);
+
+    if (pastReservations.length === 0) {
+      return null;
+    }
+
+    return pastReservations.map((reservation, index) => (
       <div key={reservation._id} className="block lg:table-row mb-4 text-[15px] lg:mb-0">
         <div className="block lg:table-cell p-2 font-bold">{index + 1}</div>
         <div className="block lg:table-cell p-2 font-bold">{reservation.idVoiture ? `${reservation.idVoiture.marque} ${reservation.idVoiture.modele}` : 'Car details not available'}</div>
@@ -189,9 +212,24 @@ const OrderPage = () => {
     }
   };
 
+  const isAllSectionsEmpty = () => {
+    const now = new Date();
+    const scheduledReservations = reservations.filter(reservation => reservation.status === 'en Attent' && new Date(reservation.dateDebut) >= now);
+    const completedReservations = reservations.filter(reservation => reservation.status === 'confirmer' && new Date(reservation.dateDebut) >= now);
+    const cancelledReservations = reservations.filter(reservation => reservation.status === 'annuler' && new Date(reservation.dateDebut) >= now);
+    const pastReservations = reservations.filter(reservation => new Date(reservation.dateDebut) < now);
+
+    return (
+      scheduledReservations.length === 0 &&
+      completedReservations.length === 0 &&
+      cancelledReservations.length === 0 &&
+      pastReservations.length === 0
+    );
+  };
+
   return (
     <div>
-      <NavProfile isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+      <NavProfile isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} client={client}/>
       <div className="container mx-auto px-6 py-8">
         <div className="flex flex-col md:flex-row md:space-y-0 md:space-x-6">
           <DashboardFavCar
@@ -203,19 +241,25 @@ const OrderPage = () => {
           />
           <div className="bg-white shadow-md rounded-md p-6 w-full md:w-3/4">
             <h1 className="text-2xl font-bold mb-4">My Orders</h1>
-            <OrderSection title="Scheduled Orders" status="en Attent" renderOrders={renderOrders} />
-            <OrderSection title="Completed Orders" status="confirmer" renderOrders={renderOrders} />
-            <OrderSection title="Cancelled Orders" status="annuler" renderOrders={renderOrders} />
-            <h2 className="text-xl font-semibold mb-4 mt-8">Past Reservations</h2>
-            <div>
-              <button
-                onClick={() => setShowPastReservations(!showPastReservations)}
-                className="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 transition duration-200"
-              >
-                {showPastReservations ? 'Hide' : 'Show'} Past Reservations
-              </button>
-              {showPastReservations && <OrderSection title="Past Reservations" status="past" renderOrders={renderPastOrders} />}
-            </div>
+            {isAllSectionsEmpty() ? (
+              <div className='className="text-gray-700"'>You have no reservations at the moment.</div>
+            ) : (
+              <>
+                <OrderSection title="Scheduled Orders" status="en Attent" renderOrders={renderOrders} />
+                <OrderSection title="Completed Orders" status="confirmer" renderOrders={renderOrders} />
+                <OrderSection title="Cancelled Orders" status="annuler" renderOrders={renderOrders} />
+                <h2 className="text-xl font-semibold mb-4 mt-8">Past Reservations</h2>
+                <div>
+                  <button
+                    onClick={() => setShowPastReservations(!showPastReservations)}
+                    className="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 transition duration-200"
+                  >
+                    {showPastReservations ? 'Hide' : 'Show'} Past Reservations
+                  </button>
+                  {showPastReservations && <OrderSection title="Past Reservations" status="past" renderOrders={renderPastOrders} />}
+                </div>
+              </>
+            )}
             {error && <p className="text-red-500 mt-4">{error}</p>}
           </div>
         </div>

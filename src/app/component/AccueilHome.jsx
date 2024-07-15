@@ -17,7 +17,6 @@ const AccueilHome = ({ isAuth, handleLogout, client }) => {
           <nav className="flex space-x-4 lg:space-x-20">
             <a href="/" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Home</a>
             <a href="/cars" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Cars</a>
-            {/* <a href="#" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Booking</a> */}
             <a href="/profile" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">My Account</a>
             <a href="/blogs" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">Blogs</a>
             <a href="/faq" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm lg:text-base">FAQs</a>
@@ -34,7 +33,7 @@ const AccueilHome = ({ isAuth, handleLogout, client }) => {
           <div className="hidden md:flex items-center">
             {client && (
               <a href="/profile">
-                <img src={client.image} alt="Profile" className="rounded-full w-10 h-10 mr-4 border-2 border-[#1ECB15]" />
+                <img src={client.image ? client.image : '/images/avatar.png'} alt="Profile" className="rounded-full w-10 h-10 mr-4 border-2 border-[#1ECB15]" />
               </a>
             )}
             <button
@@ -62,7 +61,7 @@ const AccueilHome = ({ isAuth, handleLogout, client }) => {
           <a href="/faq" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">FAQs</a>
           {client && (
             <a href="/profile">
-              <img src={client.image} alt="Profile" className="rounded-full w-8 h-8 mr-4 border-2 border-[#1ECB15]" />
+              <img src={client.image ? client.image : '/images/avatar.png'} alt="Profile" className="rounded-full w-8 h-8 mr-4 border-2 border-[#1ECB15]" />
             </a>
           )}
           {isAuth ? (

@@ -30,7 +30,7 @@ const NavBlog = ({ isAuth, handleLogout, menuOpen, setMenuOpen, client }) => {
                     <div className="hidden md:flex items-center">
                         {client && (
                             <a href="/profile">
-                            <img src={client.image} alt="Profile" className="rounded-full w-10 h-10 mr-4 border-2 border-[#1ECB15]" />
+                            <img src={client.image ? client.image : '/images/avatar.png'} alt="Profile" className="rounded-full w-10 h-10 mr-4 border-2 border-[#1ECB15]" />
                             </a>
                         )}
                         <button
@@ -57,7 +57,7 @@ const NavBlog = ({ isAuth, handleLogout, menuOpen, setMenuOpen, client }) => {
                     <a href="/faq" className="hover:text-[#1ECB15] font-outfit font-semibold text-sm">FAQs</a>
                     {client && (
                         <a href="/profile">
-                        <img src={client.image} alt="Profile" className="rounded-full w-8 h-8 mr-4 border-2 border-[#1ECB15]" />
+                        <img src={client.image ? client.image : '/images/avatar.png'} alt="Profile" className="rounded-full w-8 h-8 mr-4 border-2 border-[#1ECB15]" />
                         </a>
                     )}
                     {isAuth ? (

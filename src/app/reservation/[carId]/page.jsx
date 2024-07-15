@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useRouter } from 'next/navigation';
-import NavProfile from '../../component/NavProfile'
-import ReservationForm from '../../component/ReservationForm'
+import NavProfile from '../../component/NavProfile';
+import ReservationForm from '../../component/ReservationForm';
 
 const ReservationPage = () => {
   const userId = localStorage.getItem('userId');
@@ -106,8 +106,16 @@ const ReservationPage = () => {
       newErrors.push('Dates must be in the future');
     }
     
-    // Vérification de la date d'expiration du permis
+    // Check if any required client fields are empty
+    const requiredFields = ['nom', 'prenom', 'email', 'CIN', 'passport', 'adresse', 'numTel', 'numPermisConduire'];
     if (client) {
+      for (const field of requiredFields) {
+        if (!client[field] || client[field].trim() === '') {
+          newErrors.push(`Client information incomplete: ${field} is required`);
+        }
+      }
+
+      // Vérification de la date d'expiration du permis
       const dateExpirationPermis = new Date(client.dateExpirationPermis);
       if (dateExpirationPermis < now) {
         newErrors.push('The client\'s driving license has expired');
@@ -155,6 +163,18 @@ const ReservationPage = () => {
         errors={errors}
         totalPrice={totalPrice}
       />
+      {errors.some(error => error.includes('Client information incomplete')) && (
+        <div className="alert bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative" role="alert">
+          <strong className="font-bold">Profile Incomplete!</strong>
+          <span className="block sm:inline"> Please update your profile to complete the booking.</span>
+          <button
+            onClick={() => router.push(`/updateUser/${userId}`)}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4"
+          >
+            Complete Your Profile 
+          </button>
+        </div>
+      )}
     </div>
   );
 };

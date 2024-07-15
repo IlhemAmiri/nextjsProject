@@ -1,22 +1,46 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { FaUser, FaCalendar, FaCar, FaSignOutAlt } from 'react-icons/fa';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 
 const UpdateUserInfo = ({ client, setClient, handleFileChange, handleUpdate, error, activePage, handleItemClick, handleLogout }) => {
+    const [formError, setFormError] = useState('');
+
     const handlePhoneChange = (value) => {
-        // Ajoutez le signe "+" si nécessaire
+        // Add the "+" sign if necessary and check the length
         const formattedValue = value.startsWith('+') ? value : `+${value}`;
-        setClient({ ...client, numTel: formattedValue });
+        if (formattedValue.length >= 6) {
+            setClient({ ...client, numTel: formattedValue });
+            setFormError(''); // Clear the error message if valid
+        } else {
+            setFormError('Phone number must be at least 6 characters long.');
+        }
     };
+    
+
+    const validateForm = () => {
+        if (!client.nom || !client.prenom || !client.email || !client.numTel || !client.adresse || !client.CIN || !client.passport || !client.dateNaissance || !client.numPermisConduire || !client.dateExpirationPermis) {
+            setFormError('Please fill out all required fields.');
+            return false;
+        }
+        setFormError('');
+        return true;
+    };
+
+    const handleUpdateClick = () => {
+        if (validateForm()) {
+            handleUpdate();
+        }
+    };
+
     return (
         <div className="flex justify-center py-12 bg-gray-100">
-            <div className="w-full max-w-7xl flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6  pl-[2.5%]">
+            <div className="w-full max-w-7xl flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6 pl-[2.5%]">
                 <div className="bg-white shadow-md rounded-md p-6 w-full md:w-1/4 flex flex-col items-center">
-                    <img src={client.image} alt="Profile" className="rounded-full w-32 h-32 border-4 border-[#1ECB15]" />
+                    <img src={client.image ? client.image : '/images/avatar.png'} alt="Profile" className="rounded-full w-32 h-32 border-4 border-[#1ECB15]" />
                     <h2 className="text-xl font-semibold mt-4 text-center">{client.nom} {client.prenom}</h2>
                     <p>{client.email}</p>
                     <nav className="mt-6 w-full">
@@ -68,6 +92,7 @@ const UpdateUserInfo = ({ client, setClient, handleFileChange, handleUpdate, err
                 <div className="bg-white shadow-md rounded-md p-6 w-full md:w-3/4">
                     <h2 className="text-2xl font-semibold mb-4">Update Client Information</h2>
                     {error && <div className="text-red-500 mb-4">{error}</div>}
+                    {formError && <div className="text-red-500 mb-4">{formError}</div>}
                     <form>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
@@ -75,6 +100,7 @@ const UpdateUserInfo = ({ client, setClient, handleFileChange, handleUpdate, err
                                 <input
                                     type="text"
                                     id="nom"
+                                    required
                                     className="w-full border rounded px-3 py-2"
                                     value={client.nom}
                                     onChange={(e) => setClient({ ...client, nom: e.target.value })}
@@ -85,6 +111,7 @@ const UpdateUserInfo = ({ client, setClient, handleFileChange, handleUpdate, err
                                 <input
                                     type="text"
                                     id="prenom"
+                                    required
                                     className="w-full border rounded px-3 py-2"
                                     value={client.prenom}
                                     onChange={(e) => setClient({ ...client, prenom: e.target.value })}
@@ -95,6 +122,7 @@ const UpdateUserInfo = ({ client, setClient, handleFileChange, handleUpdate, err
                                 <input
                                     type="email"
                                     id="email"
+                                    required
                                     className="w-full border rounded px-3 py-2"
                                     value={client.email}
                                     onChange={(e) => setClient({ ...client, email: e.target.value })}
@@ -143,6 +171,7 @@ const UpdateUserInfo = ({ client, setClient, handleFileChange, handleUpdate, err
                                     className="w-full border rounded px-3 py-2"
                                     value={client.adresse}
                                     onChange={(e) => setClient({ ...client, adresse: e.target.value })}
+                                    required
                                 />
                             </div>
                             <div>
@@ -150,6 +179,7 @@ const UpdateUserInfo = ({ client, setClient, handleFileChange, handleUpdate, err
                                 <input
                                     type="text"
                                     id="CIN"
+                                    required
                                     className="w-full border rounded px-3 py-2"
                                     value={client.CIN}
                                     onChange={(e) => setClient({ ...client, CIN: e.target.value })}
@@ -163,6 +193,7 @@ const UpdateUserInfo = ({ client, setClient, handleFileChange, handleUpdate, err
                                     className="w-full border rounded px-3 py-2"
                                     value={client.passport}
                                     onChange={(e) => setClient({ ...client, passport: e.target.value })}
+                                    required
                                 />
                             </div>
                             <div>
@@ -170,6 +201,7 @@ const UpdateUserInfo = ({ client, setClient, handleFileChange, handleUpdate, err
                                 <input
                                     type="date"
                                     id="dateNaissance"
+                                    required
                                     className="w-full border rounded px-3 py-2"
                                     value={client.dateNaissance}
                                     onChange={(e) => setClient({ ...client, dateNaissance: e.target.value })}
@@ -180,6 +212,7 @@ const UpdateUserInfo = ({ client, setClient, handleFileChange, handleUpdate, err
                                 <input
                                     type="text"
                                     id="numPermisConduire"
+                                    required
                                     className="w-full border rounded px-3 py-2"
                                     value={client.numPermisConduire}
                                     onChange={(e) => setClient({ ...client, numPermisConduire: e.target.value })}
@@ -190,6 +223,7 @@ const UpdateUserInfo = ({ client, setClient, handleFileChange, handleUpdate, err
                                 <input
                                     type="date"
                                     id="dateExpirationPermis"
+                                    required
                                     className="w-full border rounded px-3 py-2"
                                     value={client.dateExpirationPermis}
                                     onChange={(e) => setClient({ ...client, dateExpirationPermis: e.target.value })}
@@ -207,7 +241,7 @@ const UpdateUserInfo = ({ client, setClient, handleFileChange, handleUpdate, err
                         </div>
                         <button
                             type="button"
-                            onClick={handleUpdate}
+                            onClick={handleUpdateClick}
                             className="mt-6 w-full bg-[#1ECB15] text-white py-2 px-4 rounded transition-transform hover:scale-105"
                         >
                             Update Information

@@ -5,7 +5,7 @@ import { FaUser, FaCalendar, FaCar, FaSignOutAlt } from 'react-icons/fa';
 const DashboardProfile = ({ client, activePage, handleItemClick, handleLogout, handleDelete }) => {
   return (
     <div className="bg-white shadow-md rounded-md p-6 w-full md:w-1/4 flex flex-col items-center">
-      <img src={client.image} alt="Profile" className="rounded-full w-32 h-32 border-4 border-[#1ECB15]" />
+      <img src={client.image ? client.image : '/images/avatar.png'} alt="Profile" className="rounded-full w-32 h-32 border-4 border-[#1ECB15]" />
       <h2 className="text-xl font-semibold mt-4 text-center">{client.nom} {client.prenom}</h2>
       <p>{client.email}</p>
       <nav className="mt-6 w-full">

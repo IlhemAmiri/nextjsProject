@@ -130,7 +130,7 @@ const Page = () => {
           </div>
         )}
         <div className="flex flex-col items-center justify-center flex-1 my-16">
-          <div className="w-[409.33px] h-[468.75px] bg-white rounded-[4.8px] shadow-[0px_30px_60px_0px_#0013570F]">
+          <div className="w-[409.33px] h-[500px] bg-white rounded-[4.8px] shadow-[0px_30px_60px_0px_#0013570F]">
             <div className="p-10">
               <h2 className="text-[#020202] font-outfit font-semibold text-[20px] leading-[26px] tracking-[-0.2px]">Login</h2>
               <input
@@ -172,6 +172,11 @@ const Page = () => {
                 <Link href="/signup">
                   <div className=" font-inter font-normal text-[14px] leading-[19.36px] cursor-pointer">
                     Don't have an account? <span className='text-[#1ECB15]'>Create one</span>
+                  </div>
+                </Link>
+                <Link href="/forgot-password">
+                  <div className="font-inter font-normal text-[14px] leading-[19.36px] cursor-pointer mt-4 text-[#1ECB15]">
+                    Forgot Password?
                   </div>
                 </Link>
               </div>

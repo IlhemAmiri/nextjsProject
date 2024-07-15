@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import NavProfile from '../../component/NavProfile';
 import UpdateUserInfo from '../../component/UpdateUserInfo';
-
+import UpdatePassword from '../../component/UpdatePassword';
 const UpdateUserPage = ({ params }) => {
   const [client, setClient] = useState({
     nom: '',
@@ -135,6 +135,28 @@ const UpdateUserPage = ({ params }) => {
       setError(error.message);
     }
   };
+  const handlePasswordUpdate = async (oldPassword, newPassword) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:3001/users/update-password', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: clientId, oldPassword, newPassword }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update password');
+      }
+  
+      alert('Password updated successfully');
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+  
 
   if (!client) {
     return <div>Loading...</div>;
@@ -153,6 +175,7 @@ const UpdateUserPage = ({ params }) => {
         handleItemClick={handleItemClick}
         handleLogout={handleLogout}
       />
+       <UpdatePassword handlePasswordUpdate={handlePasswordUpdate} error={error} />
     </div>
   );
 };

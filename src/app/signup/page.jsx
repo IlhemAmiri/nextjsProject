@@ -49,7 +49,12 @@ const Signup = () => {
   // Gestionnaire de changement pour le champ de numéro de téléphone
   const handlePhoneChange = (value) => {
     const formattedValue = value.startsWith('+') ? value : `+${value}`;
-    setFormData({ ...formData, numTel: formattedValue });
+    if (formattedValue.length >= 6) {
+      setFormData({ ...formData, numTel: formattedValue });
+      setError('');
+    } else {
+      setError('Phone number must be at least 6 characters long.');
+    }
   };
 
   const handleFileChange = (e) => {
@@ -239,7 +244,7 @@ const Signup = () => {
             <label htmlFor="numTel" className="block text-sm font-medium text-gray-700">Phone Number</label>
             <div className="mt-1 flex items-center">
               <PhoneInput
-                country={'tn'} // Définissez ici le pays par défaut souhaité
+                country={'tn'} 
                 value={formData.numTel}
                 onChange={handlePhoneChange}
                 inputProps={{
