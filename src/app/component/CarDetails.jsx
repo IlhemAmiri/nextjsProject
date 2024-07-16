@@ -80,7 +80,7 @@ const CarDetails = ({
                                 onClick={() => setShowRatingForm(true)}
                                 className="text-[#1ECB15] rounded pl-[50px] ml-auto"
                             >
-                                Add Your Rate
+                                Rate This Car
                             </button>
                         </div>
 
