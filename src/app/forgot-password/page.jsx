@@ -1,47 +1,54 @@
 "use client";
 import React, { useState } from 'react';
+import axios from 'axios';
 
-const ForgotPassword = () => {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+const ForgotPasswordPage = () => {
+    const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
 
-  const handleForgotPassword = async () => {
-    try {
-      const response = await fetch('http://localhost:3001/users/forgot-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to send reset password email');
-      }
-      setMessage('A reset password email has been sent to your email address.');
-    } catch (error) {
-      setError('Failed to send reset password email');
-    }
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post('http://localhost:3001/users/forgot-password', { email });
+            setMessage('Password reset email sent. Please check your inbox.');
+            setError('');
+        } catch (err) {
+            setError(err.response.data.message || 'Failed to send password reset email');
+            setMessage('');
+        }
+    };
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center">
-      <div className="w-[409.33px] h-[268.75px] bg-white rounded-[4.8px] shadow-[0px_30px_60px_0px_#0013570F] p-10">
-        <h2 className="text-[#020202] font-outfit font-semibold text-[20px] leading-[26px] tracking-[-0.2px]">Forgot Password</h2>
-        <input
-          type="email"
-          placeholder="Your Email Address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-[329.33px] h-[45.59px] mt-10 p-[12px_10px_13.59px_10px] rounded-[6px] bg-[#00000006] border-[2px] border-[#EEEEEE] text-[#757575] font-inter font-normal text-[16px] leading-[19.36px] placeholder-[#757575]"
-          required
-        />
-        {message && <p className="text-green-500 text-sm">{message}</p>}
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        <button onClick={handleForgotPassword} className="w-[329.33px] h-[45.19px] mt-[15px] p-[3.4px_0px_4.59px_0px] rounded-[4.8px] bg-[#1ECB15] text-white font-inter font-bold text-[16px] leading-[19.36px]">Send Reset Email</button>
-      </div>
-    </div>
-  );
-}
+    return (
+        <div className="flex justify-center py-12 bg-gray-100">
+            <div className="w-full max-w-md bg-white shadow-md rounded-md p-6">
+                <h2 className="text-2xl font-semibold mb-4">Forgot Password</h2>
+                {message && <div className="text-green-500 mb-4">{message}</div>}
+                {error && <div className="text-red-500 mb-4">{error}</div>}
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-4">
+                        <label htmlFor="email" className="block font-medium mb-2">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            className="w-full border rounded px-3 py-2"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        className="w-full bg-[#1ECB15] text-white py-2 px-4 rounded transition-transform hover:scale-105"
+                    >
+                        Send Reset Email
+                    </button>
+                </form>
+            </div>
+        </div>
+    );
+};
 
-export default ForgotPassword;
+export default ForgotPasswordPage;
+
+

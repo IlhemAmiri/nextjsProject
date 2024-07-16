@@ -1,60 +1,90 @@
 "use client";
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-const ResetPassword = () => {
-  const [resetToken, setResetToken] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+const ResetPasswordPage = () => {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const [token, setToken] = useState('');
+    const [email, setEmail] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
 
-  const router = useRouter();
+    useEffect(() => {
+        const tokenParam = searchParams.get('token');
+        const emailParam = searchParams.get('email');
 
-  const handleResetPassword = async () => {
-    try {
-      const response = await fetch('http://localhost:3001/users/reset-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ resetToken, newPassword }),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to reset password');
-      }
-      setMessage('Password has been reset successfully.');
-      router.push('/signin');
-    } catch (error) {
-      setError('Failed to reset password');
-    }
-  };
+        if (!tokenParam || !emailParam) {
+            setError('Invalid or missing token/email');
+        } else {
+            setToken(tokenParam);
+            setEmail(emailParam);
+        }
+    }, [searchParams]);
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center">
-      <div className="w-[409.33px] h-[268.75px] bg-white rounded-[4.8px] shadow-[0px_30px_60px_0px_#0013570F] p-10">
-        <h2 className="text-[#020202] font-outfit font-semibold text-[20px] leading-[26px] tracking-[-0.2px]">Reset Password</h2>
-        <input
-          type="text"
-          placeholder="Reset Token"
-          value={resetToken}
-          onChange={(e) => setResetToken(e.target.value)}
-          className="w-[329.33px] h-[45.59px] mt-10 p-[12px_10px_13.59px_10px] rounded-[6px] bg-[#00000006] border-[2px] border-[#EEEEEE] text-[#757575] font-inter font-normal text-[16px] leading-[19.36px] placeholder-[#757575]"
-          required
-        />
-        <input
-          type="password"
-          placeholder="New Password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          className="w-[329.33px] h-[45.59px] mt-4 p-[12px_10px_13.59px_10px] rounded-[6px] bg-[#00000006] border-[2px] border-[#EEEEEE] text-[#757575] font-inter font-normal text-[16px] leading-[19.36px] placeholder-[#757575]"
-          required
-        />
-        {message && <p className="text-green-500 text-sm">{message}</p>}
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        <button onClick={handleResetPassword} className="w-[329.33px] h-[45.19px] mt-[15px] p-[3.4px_0px_4.59px_0px] rounded-[4.8px] bg-[#1ECB15] text-white font-inter font-bold text-[16px] leading-[19.36px]">Reset Password</button>
-      </div>
-    </div>
-  );
-}
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (newPassword !== confirmPassword) {
+            setError('Passwords do not match');
+            return;
+        }
+        try {
+            await axios.post('http://localhost:3001/users/reset-password', {
+                resetToken: token,
+                newPassword,
+                email,
+            });
+            setMessage('Password has been reset successfully');
+            setError('');
+            router.push('/signin');
+        } catch (err) {
+            setError(err.response.data.message || 'Failed to reset password');
+            setMessage('');
+        }
+    };
 
-export default ResetPassword;
+    return (
+        <div className="flex justify-center py-12 bg-gray-100">
+            <div className="w-full max-w-md bg-white shadow-md rounded-md p-6">
+                <h2 className="text-2xl font-semibold mb-4">Reset Password</h2>
+                {message && <div className="text-green-500 mb-4">{message}</div>}
+                {error && <div className="text-red-500 mb-4">{error}</div>}
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-4">
+                        <label htmlFor="newPassword" className="block font-medium mb-2">New Password</label>
+                        <input
+                            type="password"
+                            id="newPassword"
+                            className="w-full border rounded px-3 py-2"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="confirmPassword" className="block font-medium mb-2">Confirm Password</label>
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            className="w-full border rounded px-3 py-2"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        className="w-full bg-[#1ECB15] text-white py-2 px-4 rounded transition-transform hover:scale-105"
+                    >
+                        Reset Password
+                    </button>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+export default ResetPasswordPage;
