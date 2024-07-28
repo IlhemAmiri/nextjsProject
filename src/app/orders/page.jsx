@@ -79,7 +79,11 @@ const OrderPage = () => {
   };
 
   if (!client) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <img src="/images/loading.gif" alt="Loading..." className="w-[250px]" />
+      </div>
+    );
   }
 
   const renderOrderStatus = (status) => {

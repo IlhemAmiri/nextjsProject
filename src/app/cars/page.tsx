@@ -36,9 +36,10 @@ const Page = () => {
     bodyType: '',
     seats: '',
     minPrice: '0',
-    maxPrice: '10000',
+    maxPrice: '100000',
   });
   const [priceRange, setPriceRange] = useState<number>(10000);
+  const [loading, setLoading] = useState(true);
 
   const router = useRouter();
 
@@ -126,6 +127,7 @@ const Page = () => {
     }
   };
   const fetchCars = async (params = {}) => {
+    setLoading(true);
     try {
       const response = await axios.get(`http://localhost:3001/cars/recherche/check`, {
         params: {
@@ -138,6 +140,8 @@ const Page = () => {
       setTotalItems(response.data.total);
     } catch (error) {
       console.error('There was an error fetching the car data!', error);
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -273,6 +277,13 @@ const Page = () => {
       });
     }
   };
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <img src="/images/loading.gif" alt="Loading..." className="w-[250px]" />
+      </div>
+    );
+  }
   return (
     <div>
       <NavCars isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} client={client} />

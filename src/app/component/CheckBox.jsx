@@ -54,18 +54,18 @@ const CheckBox = ({
         <input
           type="range"
           min="0"
-          max="10000"
+          max="100000"
           value={priceRange}
           onChange={handlePriceRangeChange}
           className="w-full"
         />
         <span className="font-semibold">
-          ${priceRange.toLocaleString()} - $10,000
+          ${priceRange.toLocaleString()} - $100,000
         </span>
       </div>
       <div className="flex justify-between mt-2 text-sm text-gray-500">
         <span>$0</span>
-        <span>$10,000</span>
+        <span>$100,000</span>
       </div>
     </div>
   </div>
