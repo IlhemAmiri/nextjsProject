@@ -130,11 +130,11 @@ const OrderPage = () => {
   const renderOrders = (status) => {
     const now = new Date();
     const filteredReservations = reservations.filter(reservation => reservation.status === status && new Date(reservation.dateDebut) >= now);
-  
+
     if (filteredReservations.length === 0) {
       return null;
     }
-  
+
     return filteredReservations.map((reservation, index) => (
       <div key={reservation._id} className="block lg:table-row mb-4 text-[15px] lg:mb-0">
         <div className="block lg:table-cell p-2 font-bold">{index + 1}</div>
@@ -150,7 +150,9 @@ const OrderPage = () => {
         {status === 'confirmer' && (
           <div className="block lg:table-cell p-2">
             {reservation.statusPaiement === 'payee' ? (
-              <span>Already paid</span>
+              <span className='text-[9px]'>Already paid and confirmed</span>
+            ) : reservation.statusPaiement === 'en attente' ? (
+              <span className='text-[9px]'>Already paid awaiting for admin confirmation</span>
             ) : (
               <button
                 onClick={() => handlePayClick(reservation._id)}
@@ -229,7 +231,7 @@ const OrderPage = () => {
 
   return (
     <div>
-      <NavProfile isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} client={client}/>
+      <NavProfile isAuth={isAuth} handleLogout={handleLogout} menuOpen={menuOpen} setMenuOpen={setMenuOpen} client={client} />
       <div className="container mx-auto px-6 py-8">
         <div className="flex flex-col md:flex-row md:space-y-0 md:space-x-6">
           <DashboardFavCar

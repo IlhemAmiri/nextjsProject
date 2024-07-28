@@ -26,7 +26,7 @@ const Footer = () => {
       <div className="container mx-auto py-16 flex flex-col md:flex-row space-y-12 md:space-y-0 md:space-x-8">
         {/* Logo */}
         <div className="flex flex-col space-y-4">
-          <img src="/images/Container.png" alt="Logo" className="w-[156px] h-[56px]" />
+          <img src="/images/Container.png" alt="Logo" className='w-[120px]' />
         </div>
 
         {/* About Section */}

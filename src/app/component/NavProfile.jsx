@@ -7,7 +7,7 @@ const NavProfile = ({ isAuth, handleLogout, menuOpen, setMenuOpen, client }) => 
             <div className=" text-white flex justify-between items-center px-6 lg:px-12 py-4">
                 <div className="flex justify-center">
                     <a href="/">
-                        <img src="/images/Container.png" alt="Logo" className='w-40 h-14' />
+                        <img src="/images/Container.png" alt="Logo" className='w-[120px]' />
                     </a>
                 </div>
                 <div className="hidden md:flex flex-1 justify-center">

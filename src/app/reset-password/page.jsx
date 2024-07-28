@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const ResetPasswordPage = () => {
     const router = useRouter();
@@ -12,6 +13,8 @@ const ResetPasswordPage = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     useEffect(() => {
         const tokenParam = searchParams.get('token');
@@ -46,6 +49,14 @@ const ResetPasswordPage = () => {
         }
     };
 
+    const toggleNewPasswordVisibility = () => {
+        setShowNewPassword(!showNewPassword);
+    };
+
+    const toggleConfirmPasswordVisibility = () => {
+        setShowConfirmPassword(!showConfirmPassword);
+    };
+
     return (
         <div className="flex justify-center py-12 bg-gray-100">
             <div className="w-full max-w-md bg-white shadow-md rounded-md p-6">
@@ -55,25 +66,35 @@ const ResetPasswordPage = () => {
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label htmlFor="newPassword" className="block font-medium mb-2">New Password</label>
-                        <input
-                            type="password"
-                            id="newPassword"
-                            className="w-full border rounded px-3 py-2"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            required
-                        />
+                        <div className="relative">
+                            <input
+                                type={showNewPassword ? "text" : "password"}
+                                id="newPassword"
+                                className="w-full border rounded px-3 py-2"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                required
+                            />
+                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer" onClick={toggleNewPasswordVisibility}>
+                                {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+                            </div>
+                        </div>
                     </div>
                     <div className="mb-4">
                         <label htmlFor="confirmPassword" className="block font-medium mb-2">Confirm Password</label>
-                        <input
-                            type="password"
-                            id="confirmPassword"
-                            className="w-full border rounded px-3 py-2"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            required
-                        />
+                        <div className="relative">
+                            <input
+                                type={showConfirmPassword ? "text" : "password"}
+                                id="confirmPassword"
+                                className="w-full border rounded px-3 py-2"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                required
+                            />
+                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer" onClick={toggleConfirmPasswordVisibility}>
+                                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                            </div>
+                        </div>
                     </div>
                     <button
                         type="submit"

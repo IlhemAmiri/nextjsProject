@@ -10,7 +10,7 @@ const AccueilHome = ({ isAuth, handleLogout, client }) => {
         {/* <div className="bg-[rgba(41,41,41,0.38)] backdrop-blur-md bg-opacity-30 text-white flex justify-between items-center px-[12%] h-[102px] shadow-[0_4px_4px_rgba(0,0,0,0.25)]"> si t7eb padding x*/}
         <div className="flex justify-center">
           <a href="/">
-            <img src="/images/Container.png" alt="Logo" className='w-40 h-14' />
+            <img src="/images/Container.png" alt="Logo" className='w-[120px]' />
           </a>
         </div>
         <div className="hidden md:flex flex-1 justify-center">

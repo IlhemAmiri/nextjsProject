@@ -89,7 +89,7 @@ const PaymentPage: React.FC = () => {
       );
 
       if (response.status === 201) {
-        alert('Payment successful');
+        alert('Payment successful, awaiting admin confirmation.');
         router.push('/orders');
       } else {
         setError('Payment failed');

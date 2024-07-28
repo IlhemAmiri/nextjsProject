@@ -2,15 +2,18 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [isMounted, setIsMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
 
@@ -57,7 +60,7 @@ const Page = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, rememberMe }),
       });
       if (!response.ok) {
         throw new Error('Invalid credentials');
@@ -82,6 +85,10 @@ const Page = () => {
   };
   const handleGoogleLogin = () => {
     window.location.href = 'http://localhost:3001/auth/google';
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -142,17 +149,40 @@ const Page = () => {
                 required
               />
               {emailError && <p className="text-red-500 text-sm">{emailError}</p>}
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={`w-[329.33px] h-[45.59px] mt-[10px] p-[12px_10px_13.59px_10px] rounded-[6px] bg-[#00000006] border-[2px] ${passwordError ? 'border-red-500' : 'border-[#EEEEEE]'} text-[#757575] font-inter font-normal text-[16px] leading-[19.36px] placeholder-[#757575]`}
-                required
-              />
+              <div className="relative mt-[10px]">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={`w-[329.33px] h-[45.59px] p-[12px_10px_13.59px_10px] rounded-[6px] bg-[#00000006] border-[2px] ${passwordError ? 'border-red-500' : 'border-[#EEEEEE]'} text-[#757575] font-inter font-normal text-[16px] leading-[19.36px] placeholder-[#757575]`}
+                  required
+                />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer" onClick={togglePasswordVisibility}>
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </div>
+              </div>
               {passwordError && <p className="text-red-500 text-sm">{passwordError}</p>}
               {error && <p className="text-red-500 text-sm">{error}</p>}
               <button onClick={handleLogin} className="w-[329.33px] h-[45.19px] mt-[15px] p-[3.4px_0px_4.59px_0px] rounded-[4.8px] bg-[#1ECB15] text-white font-inter font-bold text-[16px] leading-[19.36px]">Sign In</button>
+              <div className="flex items-center justify-between mt-4">
+                <div className="flex items-center">
+                  <input
+                    id="remember_me"
+                    name="remember_me"
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="remember_me" className="ml-2 block text-sm text-gray-900">Remember me</label>
+                </div>
+                <Link href="/forgot-password">
+                  <div className="font-inter font-normal text-[14px] leading-[19.36px] cursor-pointer text-[#1ECB15]">
+                    Forgot Password?
+                  </div>
+                </Link>
+              </div>
               <div className="flex items-center mt-[40px]">
                 <div className="flex-grow border-t border-[#000000] opacity-20"></div>
                 <span className="mx-4 text-[#404040] font-inter font-normal text-[14px] leading-[27.2px] tracking-[-0.2px]">Or sign up with</span>
@@ -170,13 +200,8 @@ const Page = () => {
               </div>
               <div className="text-center mt-6">
                 <Link href="/signup">
-                  <div className=" font-inter font-normal text-[14px] leading-[19.36px] cursor-pointer">
-                    Don't have an account? <span className='text-[#1ECB15]'>Create one</span>
-                  </div>
-                </Link>
-                <Link href="/forgot-password">
-                  <div className="font-inter font-normal text-[14px] leading-[19.36px] cursor-pointer mt-4 text-[#1ECB15]">
-                    Forgot Password?
+                  <div className="font-inter font-normal text-[14px] leading-[19.36px] cursor-pointer">
+                    Don't have an account? <span className='text-[#1ECB15]'>Sign up</span>
                   </div>
                 </Link>
               </div>
