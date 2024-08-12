@@ -114,7 +114,7 @@ const Signup = () => {
       <div className="bg-[rgba(41,41,41,0.38)] backdrop-blur-md bg-opacity-30 text-white flex justify-between items-center w-full px-6 lg:px-12 py-4 shadow-md">
         <div className="flex justify-center">
           <a href="#">
-            <img src="/images/Container.png" alt="Logo" className="w-[156px] h-[56px]" />
+            <img src="/images/Container.png" alt="Logo" className='w-[120px]' />
           </a>
         </div>
         <div className="hidden md:flex flex-1 justify-center">
