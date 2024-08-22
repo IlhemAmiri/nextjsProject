@@ -13,6 +13,7 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@react-google-maps/api": "^2.19.3",
     "@types/react-datepicker": "^6.2.0",
+    "aos": "^2.3.4",
     "axios": "^1.7.2",
     "framer-motion": "^11.2.11",
     "jsonwebtoken": "^9.0.2",

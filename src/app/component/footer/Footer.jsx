@@ -113,7 +113,7 @@ const Footer = () => {
         </div>
       </div>
       {/* Arrow Section */}
-      <div className="container mx-auto flex justify-end px-4 mt-4">
+      <div className="container mx-auto flex justify-end px-4">
         <a href="#"><img src="/images/flech.png" alt="Arrow" className="w-[40px] h-[40px]" /></a>
       </div>
 
