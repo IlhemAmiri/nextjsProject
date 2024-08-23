@@ -6,7 +6,7 @@ const NavCars = ({ isAuth, handleLogout, menuOpen, setMenuOpen, client }) => {
         <div className="h-[400px] bg-cover bg-center bg-[url('/images/11.jpg')]">
             <div className="bg-[rgba(41,41,41,0.38)] backdrop-blur-md bg-opacity-30 text-white flex justify-between items-center px-6 lg:px-12 py-4 shadow-md">
                 <div className="flex justify-center">
-                    <a href="#">
+                    <a href="/">
                         <img src="/images/Container.png" alt="Logo" className='w-[120px]' />
                     </a>
                 </div>
